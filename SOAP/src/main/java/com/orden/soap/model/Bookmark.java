@@ -29,12 +29,43 @@ public class Bookmark extends Database {
     public void insertBookmark(){
         try {
             Statement stmt = this.conn.createStatement();
-            String query = "INSERT INTO bookmark (user_id_student, user_id_scholarship, scholarship_id)"
-                    + " VALUES (" + this.user_id_student + "," + this.user_id_scholarship + "," + this.scholarship_id + ")";
+            String query = "INSERT INTO bookmark (user_id_student, user_id_scholarship, scholarship_id, priority)"
+                    + " VALUES (" + this.user_id_student + "," + this.user_id_scholarship + "," + this.scholarship_id + ", 1)";
             stmt.execute(query);
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
         }
-        
+    }
+    
+    public void deleteBookmark(){
+        try{
+            Statement stmt = this.conn.createStatement();
+            String query = "DELETE FROM bookmark WHERE user_id_student = " +
+                            this.user_id_student + " AND scholarship_id = " + this.scholarship_id +
+                            " AND user_id_scholarship = " + this.user_id_scholarship;
+            stmt.execute(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void getBookmarkStudent(){
+        try{
+            Statement stmt = this.conn.createStatement();
+            String query = "SELECT * FROM bookmark WHERE user_id_student = " + this.user_id_student;
+            stmt.execute(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
+    public void getBookmarkAdmin(){
+        try{
+            Statement stmt = this.conn.createStatement();
+            String query = "SELECT * FROM bookmark WHERE user_id_scholarship = " + this.user_id_scholarship;
+            stmt.execute(query);
+        } catch (SQLException ex) {
+            Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 }
