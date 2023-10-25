@@ -12,7 +12,6 @@ import jakarta.jws.WebService;
 import jakarta.xml.ws.handler.MessageContext;
 import jakarta.xml.ws.WebServiceContext;
 import java.util.ArrayList;
-import java.util.Arrays;
 /**
  *
  * @author Matthew
@@ -27,18 +26,14 @@ public class BookmarkServiceImpl implements BookmarkService {
             MessageContext mc = wsContext.getMessageContext();
             
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-            System.out.println(exchange.getLocalAddress());
-            System.out.println(exchange.getProtocol());
-            System.out.println(exchange.getRemoteAddress().getAddress().getHostAddress());
-            String apiKey = exchange.getRequestHeaders().toString();
-            System.out.println(apiKey);
+            String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
             
-            if (apiKey != null && apiKey.equals("YourExpectedAPIKey")) {
+            if (apiKey != null && apiKey.equals("shortT_Key")) {
                 System.out.println("API-KEY: " + apiKey);
                 return true;
             } else {
                 System.out.println("Invalid API-KEY: " + apiKey);
-                return true;
+                return false;
             }
             
         } catch (Exception e) {
