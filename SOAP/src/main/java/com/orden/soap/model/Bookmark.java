@@ -127,6 +127,7 @@ public class Bookmark extends Database {
             return b;
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
     }
 }
