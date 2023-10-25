@@ -31,7 +31,7 @@ public class Logging extends Database{
             PreparedStatement stmt = this.conn.prepareStatement(query);
             stmt.setString(1, this.description);
             stmt.setString(2, this.ip_address);
-            stmt.execute(query);
+            stmt.execute();
         } catch (SQLException ex) {
             Logger.getLogger(Logging.class.getName()).log(Level.SEVERE, null, ex);
         }

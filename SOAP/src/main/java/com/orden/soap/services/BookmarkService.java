@@ -8,6 +8,7 @@ import com.orden.soap.model.Bookmark;
 import jakarta.jws.WebMethod;
 import jakarta.jws.WebParam;
 import jakarta.jws.WebService;
+import java.util.ArrayList;
 
 /**
  *
@@ -23,13 +24,19 @@ public interface BookmarkService {
     );
     
     @WebMethod
-    public String deleteBookmark(int uid, int uis, int sid);
+    public String deleteBookmark(
+            @WebParam(name="user_id_student")int uid, 
+            @WebParam(name="user_id_scholarship")int uis, 
+            @WebParam(name="scholarship_id")int sid
+    );
     
     @WebMethod
-    public Bookmark getBookmarkStudent(
+    public ArrayList<Bookmark> getBookmarkStudent(
             @WebParam(name="user_id_student")int uid
     );
     
     @WebMethod
-    public String getBookmarkScholarship(int uis);
+    public String getBookmarkScholarship(
+            @WebParam(name="user_id_scholarship")int uis
+    );
 }
