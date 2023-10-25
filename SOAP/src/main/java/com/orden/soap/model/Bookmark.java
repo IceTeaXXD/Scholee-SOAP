@@ -5,6 +5,7 @@
 package com.orden.soap.model;
 
 import com.orden.soap.database.Database;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -61,9 +62,10 @@ public class Bookmark extends Database {
     
     public void getBookmarkAdmin(){
         try{
-            Statement stmt = this.conn.createStatement();
-            String query = "SELECT * FROM bookmark WHERE user_id_scholarship = " + this.user_id_scholarship;
-            stmt.execute(query);
+            String query = "SELECT * FROM bookmark WHERE user_id_scholarship = ?";
+            PreparedStatement stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, this.user_id_scholarship);
+            stmt.execute();
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
         }

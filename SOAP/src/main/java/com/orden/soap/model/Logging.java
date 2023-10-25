@@ -5,6 +5,7 @@
 package com.orden.soap.model;
 
 import com.orden.soap.database.Database;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
@@ -26,10 +27,10 @@ public class Logging extends Database{
     
     public void insertLogging(){
         try {
-            Statement stmt = this.conn.createStatement();
-            String query = "INSERT INTO logging (description, ip_address)"
-                    + " VALUES (" + this.description + "," + this.ip_address + ")";
-            
+            String query = "INSERT INTO logging (description, ip_address) VALUES (?,?)";
+            PreparedStatement stmt = this.conn.prepareStatement(query);
+            stmt.setString(1, this.description);
+            stmt.setString(2, this.ip_address);
             stmt.execute(query);
         } catch (SQLException ex) {
             Logger.getLogger(Logging.class.getName()).log(Level.SEVERE, null, ex);
