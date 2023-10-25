@@ -4,8 +4,10 @@
  */
 package com.orden.soap.services;
 
-import javax.jws.WebMethod;
-import javax.jws.WebService;
+import com.orden.soap.model.Bookmark;
+import jakarta.jws.WebMethod;
+import jakarta.jws.WebParam;
+import jakarta.jws.WebService;
 
 /**
  *
@@ -14,13 +16,19 @@ import javax.jws.WebService;
 @WebService
 public interface BookmarkService {
     @WebMethod
-    public String insertBookmark(int uid, int uis, int sid);
+    public String insertBookmark(
+            @WebParam(name="user_id_student")int uid, 
+            @WebParam(name="user_id_scholarship")int uis, 
+            @WebParam(name="scholarship_id")int sid
+    );
     
     @WebMethod
     public String deleteBookmark(int uid, int uis, int sid);
     
     @WebMethod
-    public String getBookmarkStudent(int uid);
+    public Bookmark getBookmarkStudent(
+            @WebParam(name="user_id_student")int uid
+    );
     
     @WebMethod
     public String getBookmarkScholarship(int uis);
