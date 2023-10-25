@@ -10,7 +10,6 @@ import jakarta.xml.bind.annotation.XmlRootElement;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -66,26 +65,33 @@ public class Bookmark extends Database {
         this.scholarship_id = scholarship_id;
     }
 
-    public void insertBookmark(){
+    public Boolean insertBookmark(){
         try {
-            Statement stmt = this.conn.createStatement();
             String query = "INSERT INTO bookmark (user_id_student, user_id_scholarship, scholarship_id, priority)"
-                    + " VALUES (" + this.user_id_student + "," + this.user_id_scholarship + "," + this.scholarship_id + ", 1)";
-            stmt.execute(query);
+                    + " VALUES (?,?,?,1)";
+            
+            PreparedStatement stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, user_id_student);
+            stmt.setInt(2, user_id_scholarship);
+            stmt.setInt(3, scholarship_id);
+            return stmt.execute();
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
-    public void deleteBookmark(){
+    public Boolean deleteBookmark(){
         try{
-            Statement stmt = this.conn.createStatement();
-            String query = "DELETE FROM bookmark WHERE user_id_student = " +
-                            this.user_id_student + " AND scholarship_id = " + this.scholarship_id +
-                            " AND user_id_scholarship = " + this.user_id_scholarship;
-            stmt.execute(query);
+            String query = "DELETE FROM bookmark WHERE user_id_student = ? AND user_id_scholarship = ? AND scholarship_id = ?";
+            PreparedStatement stmt = this.conn.prepareStatement(query);
+            stmt.setInt(1, user_id_student);
+            stmt.setInt(2, user_id_scholarship);
+            stmt.setInt(3, scholarship_id);
+            return stmt.execute();
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+            return false;
         }
     }
     
@@ -103,16 +109,22 @@ public class Bookmark extends Database {
             return b;
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
+            return null;
         }
-        return null;
     }
     
-    public void getBookmarkAdmin(){
+    public ArrayList<Bookmark> getBookmarkAdmin(){
         try{
             String query = "SELECT * FROM bookmark WHERE user_id_scholarship = ?";
             PreparedStatement stmt = this.conn.prepareStatement(query);
             stmt.setInt(1, this.user_id_scholarship);
-            stmt.execute();
+            ResultSet res = stmt.executeQuery();
+            ArrayList<Bookmark> b = new ArrayList<>();
+            while (res.next()) {
+                Bookmark bookmark = new Bookmark(res.getInt("user_id_student"), res.getInt("user_id_scholarship"), res.getInt("scholarship_id"));
+                b.add(bookmark);
+            }
+            return b;
         } catch (SQLException ex) {
             Logger.getLogger(Bookmark.class.getName()).log(Level.SEVERE, null, ex);
         }

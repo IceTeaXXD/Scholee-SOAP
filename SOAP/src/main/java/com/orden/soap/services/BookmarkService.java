@@ -36,7 +36,7 @@ public interface BookmarkService {
     );
     
     @WebMethod
-    public String getBookmarkScholarship(
+    public ArrayList<Bookmark> getBookmarkScholarship(
             @WebParam(name="user_id_scholarship")int uis
     );
 }

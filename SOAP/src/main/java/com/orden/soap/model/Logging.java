@@ -7,7 +7,6 @@ package com.orden.soap.model;
 import com.orden.soap.database.Database;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 

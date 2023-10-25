@@ -45,12 +45,17 @@ public class BookmarkServiceImpl implements BookmarkService {
     @Override
     public String insertBookmark(int uid, int uis, int sid) {
         if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             Bookmark b = new Bookmark(uid, uis, sid);
-            b.insertBookmark();
-            String description = "Bookmark Creation is Successful";
-            Logging log = new Logging(description, "192.168.0.1");
-            log.insertLogging();
-            return description;
+            if(b.insertBookmark()){
+                String description = "SOAP: Bookmark Creation is Successful";
+                Logging log = new Logging(description, exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                return description;
+            }else{
+                return "Failed to Create Bookmark";
+            }
         }else{
             return "Failed to Create Bookmark";
         }
@@ -58,14 +63,21 @@ public class BookmarkServiceImpl implements BookmarkService {
 
     @Override
     public String deleteBookmark(int uid, int uis, int sid) {
-        MessageContext mc = wsContext.getMessageContext();
-        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-        Bookmark b = new Bookmark(uid, uis, sid);
-        b.deleteBookmark();
-        String description = "Bookmark Deletion is Successful";
-        Logging log = new Logging(description, exchange.getRemoteAddress().getAddress().getHostAddress());
-        log.insertLogging();
-        return description;
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            Bookmark b = new Bookmark(uid, uis, sid);
+            if(b.deleteBookmark()){
+                String description = "SOAP: Bookmark Deletion is Successful";
+                Logging log = new Logging(description, exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                return description;
+            }else{
+                return "Failed to Delete Bookmark";
+            }
+        }else{
+            return "Failed to Delete Bookmark";
+        }
     }
 
     @Override
@@ -75,7 +87,7 @@ public class BookmarkServiceImpl implements BookmarkService {
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             Bookmark b = new Bookmark(uid, 0,0);
             ArrayList<Bookmark> result = b.getBookmarkStudent();
-            String description = "Get Bookmark for Student is Successful";
+            String description = "SOAP: Get Bookmark for Student is Successful";
             Logging log = new Logging(description, exchange.getRemoteAddress().getAddress().getHostAddress());
             log.insertLogging();
             return result;
@@ -85,15 +97,19 @@ public class BookmarkServiceImpl implements BookmarkService {
     }
 
     @Override
-    public String getBookmarkScholarship(int uis) {
-        MessageContext mc = wsContext.getMessageContext();
-        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-        Bookmark b = new Bookmark(0, uis,0);
-        b.getBookmarkAdmin();
-        String description = "Get Bookmark for Admin is Successful";
-        Logging log = new Logging(description, exchange.getRemoteAddress().getAddress().getHostAddress());
-        log.insertLogging();
-        return description;
+    public ArrayList<Bookmark> getBookmarkScholarship(int uis) {
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            Bookmark b = new Bookmark(0, uis,0);
+            ArrayList<Bookmark> result = b.getBookmarkAdmin();
+            String description = "SOAP: Get Bookmark for Admin is Successful";
+            Logging log = new Logging(description, exchange.getRemoteAddress().getAddress().getHostAddress());
+            log.insertLogging();
+            return result;
+        }else{
+            return null;
+        }
     }
     
 }
