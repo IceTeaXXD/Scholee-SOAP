@@ -5,10 +5,9 @@
 package com.orden.soap.services;
 
 import com.orden.soap.model.Bookmark;
-import jakarta.jws.WebMethod;
-import jakarta.jws.WebParam;
-import jakarta.jws.WebService;
+
 import java.util.ArrayList;
+import javax.jws.*;
 
 /**
  *

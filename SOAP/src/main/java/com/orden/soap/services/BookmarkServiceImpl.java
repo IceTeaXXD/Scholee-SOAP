@@ -7,11 +7,11 @@ package com.orden.soap.services;
 import com.orden.soap.model.Bookmark;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
-import jakarta.annotation.Resource;
-import jakarta.jws.WebService;
-import jakarta.xml.ws.handler.MessageContext;
-import jakarta.xml.ws.WebServiceContext;
+import javax.jws.*;
 import java.util.ArrayList;
+import javax.annotation.Resource;
+import javax.xml.ws.WebServiceContext;
+import javax.xml.ws.handler.MessageContext;
 /**
  *
  * @author Matthew

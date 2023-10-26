@@ -5,7 +5,7 @@
 package com.orden.soap;
 
 import com.orden.soap.services.BookmarkServiceImpl;
-import jakarta.xml.ws.Endpoint;
+import javax.xml.ws.Endpoint;
 
 /**
  *
