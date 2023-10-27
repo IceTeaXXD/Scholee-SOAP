@@ -5,6 +5,7 @@
 package com.orden.soap;
 
 import com.orden.soap.services.BookmarkServiceImpl;
+import com.orden.soap.services.HistoryServiceImpl;
 import javax.xml.ws.Endpoint;
 
 /**
@@ -14,6 +15,7 @@ import javax.xml.ws.Endpoint;
 public class Publisher {
     public static void main(String[] args) {
         Endpoint.publish("http://localhost:8080/ws/bookmarking", new BookmarkServiceImpl());
+        Endpoint.publish("http://localhost:8080/ws/history", new HistoryServiceImpl());
         System.out.println("Listening at port 8080");
     }
 }
