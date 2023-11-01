@@ -1,6 +1,22 @@
 # SOAP Service
 
+## Prerequisite
+Install Maven and a Java SDK
 
+## To Run
+### Using Maven
+In the soap-service, prompt 
+```
+mvn clean install
+mvn exec:java
+```
+
+### Using Java
+In the soap-service, prompt 
+```
+mvn clean install
+java --add-opens java.base/java.lang=ALL-UNNAMED -jar ./target/SOAP-1.0-SNAPSHOT.jar
+```
 
 ## Getting started
 
