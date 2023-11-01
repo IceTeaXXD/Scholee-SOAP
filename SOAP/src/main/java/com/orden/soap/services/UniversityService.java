@@ -21,6 +21,7 @@ public interface UniversityService {
     
     @WebMethod
     public String setPHPId(
-            @WebParam(name="php_uni_id") int php_uni_id
+            @WebParam(name="php_uni_id") int php_uni_id,
+            @WebParam(name="rest_uni_id") int rest_uni_id
     );
 }

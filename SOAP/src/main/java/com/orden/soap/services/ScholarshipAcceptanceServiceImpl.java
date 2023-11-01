@@ -52,25 +52,31 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
     @Override
     @WebMethod
     public String setAcceptance(int uid, int uis, int sid, String status) {
-        MessageContext mc = wsContext.getMessageContext();
-        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-        try {
-            String query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?)";
-            PreparedStatement stmt = db.getConnection().prepareStatement(query);
-            stmt.setInt(1, uid);
-            stmt.setInt(2, uis);
-            stmt.setInt(3, sid);
-            stmt.setString(4, status);
-            if(stmt.execute()){
-                Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
-                log.insertLogging();
-                return "Success";
-            }else{
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            try {
+                String query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?)";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, uid);
+                stmt.setInt(2, uis);
+                stmt.setInt(3, sid);
+                stmt.setString(4, status);
+                stmt.execute();
+
+                if(stmt.getUpdateCount() > 0){
+                    Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    return "Success";
+                }else{
+                    return "Fail";
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 return "Fail";
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Fail";
+        }else{
+            return "Illegal Process";
         }
     }
     

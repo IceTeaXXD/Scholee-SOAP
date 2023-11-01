@@ -53,50 +53,62 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     @WebMethod
     public String createUniversity(int rest_uni_id) {
-        MessageContext mc = wsContext.getMessageContext();
-            
-        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-        
-        try {
-            String query = "INSERT INTO university (rest_uni_id) VALUES (?)";
-            PreparedStatement stmt = db.getConnection().prepareStatement(query);
-            stmt.setInt(1, rest_uni_id);
-            if(stmt.execute()){
-                /* Log it and Return Success */
-                Logging log = new Logging("REST UNIVERSITY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
-                log.insertLogging();
-                return "Success";
-            }else{
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+
+            try {
+                String query = "INSERT INTO university (rest_uni_id) VALUES (?)";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, rest_uni_id);
+                stmt.execute();
+                if(stmt.getUpdateCount() > 0){
+                    /* Log it and Return Success */
+                    Logging log = new Logging("REST UNIVERSITY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    return "Success";
+                }else{
+                    return "Failed";
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 return "Failed";
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Failed";
+        }else{
+            return "Illegal Process";
         }
     }
 
     @Override
     @WebMethod
-    public String setPHPId(int php_uni_id) {
-        MessageContext mc = wsContext.getMessageContext();
-            
-        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-        
-        try {
-            String query = "INSERT INTO university (php_uni_id) VALUES (?)";
-            PreparedStatement stmt = db.getConnection().prepareStatement(query);
-            stmt.setInt(1, php_uni_id);
-            if(stmt.execute()){
-                /* Log it and Return Success */
-                Logging log = new Logging("PHP UNIVERSITY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
-                log.insertLogging();
-                return "Success";
-            }else{
+    public String setPHPId(int php_uni_id, int rest_uni_id) {
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+
+            try {
+                String query = "UPDATE university SET php_uni_id = ? WHERE rest_uni_id = ?";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, php_uni_id);
+                stmt.setInt(2, rest_uni_id);
+
+                stmt.execute();
+                if(stmt.getUpdateCount() > 0){
+                    /* Log it and Return Success */
+                    Logging log = new Logging("PHP UNIVERSITY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    return "Success";
+                }else{
+                    return "Failed";
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 return "Failed";
             }
-        } catch (SQLException ex) {
-            Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return "Failed";
+        }else{
+            return "Illegal Process";
         }
     }
     

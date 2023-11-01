@@ -62,18 +62,20 @@ public class OrganizationRegistrationServiceImpl implements OrganizationRegistra
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                int tokenLength = 64;
+                int tokenLength = 16;
 
                 SecureRandom secureRandom = new SecureRandom();
                 byte[] randomBytes = new byte[tokenLength];
                 secureRandom.nextBytes(randomBytes);
 
                 String token = Base64.getEncoder().encodeToString(randomBytes);
-
+                
                 stmt.setInt(1, org_id_php);
                 stmt.setString(2, token);
+                stmt.execute();
 
-                if(stmt.execute()){
+                if(stmt.getUpdateCount() > 0){
+                    /* TODO: Add SOAP or REST Information on Description */
                     Logging log = new Logging("REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
@@ -102,19 +104,20 @@ public class OrganizationRegistrationServiceImpl implements OrganizationRegistra
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if(validateAPIKey()){
             try {
-                String query = "SELECT org_id_php FROM organization_registration WHERE referral_code = ?";
+                String query = "SELECT org_id_php FROM organization_registration WHERE referral_code = (?)";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setString(1, referral);
                 
                 if(stmt.execute()){
-                    query = "UPDATE SET org_id_rest = ? WHERE referral_code = ?";
+                    query = "UPDATE organization_registration SET org_id_rest = ? WHERE referral_code = ?";
                     stmt = db.getConnection().prepareStatement(query);
                     stmt.setInt(1, org_id_rest);
                     stmt.setString(2, referral);
+                    stmt.execute();
                     
                     String returnVal;
                     
-                    if(stmt.execute()){
+                    if(stmt.getUpdateCount() > 0){
                         Logging log = new Logging("HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                         log.insertLogging();
                         returnVal = "Register Success";
