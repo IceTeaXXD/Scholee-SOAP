@@ -21,14 +21,12 @@ import javax.xml.ws.handler.MessageContext;
  *
  * @author Matthew
  */
-@WebService(endpointInterface="com.orden.soap.services.HistoryService")
-public class HistoryServiceImpl implements HistoryService{
+@WebService(endpointInterface="com.orden.soap.services.ScholarshipAcceptanceService")
+public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceService {
+    private static final Database db = new Database();
+    
     @Resource
     WebServiceContext wsContext;
-    
-    public HistoryServiceImpl() {
-        super();
-    }
     
     public Boolean validateAPIKey() {
         try {
@@ -53,34 +51,26 @@ public class HistoryServiceImpl implements HistoryService{
     
     @Override
     @WebMethod
-    public String addHistory(int uid, int uis, int sid) {
-        if(validateAPIKey()){
-            MessageContext mc = wsContext.getMessageContext();
-            
-            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-            
-            Logging log = new Logging("SOAP: HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
-            log.insertLogging();
-            
-            String query = "INSER INTO view_history VALUES (?,?,?)";
-            PreparedStatement stmt;
-            try {
-                Database db = new Database();
-                stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(3, sid);
-                stmt.setInt(2, uis);
-                stmt.setInt(1, uid);
-                if(stmt.execute()){
-                    return "Sukses menambahkan riwayat";
-                }else{
-                    return "Gagal menambahkan riwayat";
-                }
-            } catch (SQLException ex) {
-                Logger.getLogger(HistoryServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                return "Gagal menambahkan riwayat";
+    public String setAcceptance(int uid, int uis, int sid, String status) {
+        MessageContext mc = wsContext.getMessageContext();
+        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+        try {
+            String query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?)";
+            PreparedStatement stmt = db.getConnection().prepareStatement(query);
+            stmt.setInt(1, uid);
+            stmt.setInt(2, uis);
+            stmt.setInt(3, sid);
+            stmt.setString(4, status);
+            if(stmt.execute()){
+                Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                return "Success";
+            }else{
+                return "Fail";
             }
-        }else{
-            return "API KEY SALAH";
+        } catch (SQLException ex) {
+            Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return "Fail";
         }
     }
     

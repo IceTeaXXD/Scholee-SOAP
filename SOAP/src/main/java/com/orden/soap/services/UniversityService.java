@@ -13,11 +13,14 @@ import javax.jws.WebService;
  * @author Matthew
  */
 @WebService
-public interface HistoryService {
+public interface UniversityService {
     @WebMethod
-    public String addHistory(
-            @WebParam(name="user_id_student") int uid,
-            @WebParam(name="user_id_scholarship") int uis,
-            @WebParam(name="scholarship_id") int sid
+    public String createUniversity(
+            @WebParam(name="rest_uni_id")int rest_uni_id
+    );
+    
+    @WebMethod
+    public String setPHPId(
+            @WebParam(name="php_uni_id") int php_uni_id
     );
 }

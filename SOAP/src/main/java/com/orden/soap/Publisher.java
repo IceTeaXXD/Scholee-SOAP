@@ -4,8 +4,9 @@
  */
 package com.orden.soap;
 
-import com.orden.soap.services.BookmarkServiceImpl;
-import com.orden.soap.services.HistoryServiceImpl;
+import com.orden.soap.services.OrganizationRegistrationServiceImpl;
+import com.orden.soap.services.ScholarshipAcceptanceServiceImpl;
+import com.orden.soap.services.UniversityServiceImpl;
 import javax.xml.ws.Endpoint;
 
 /**
@@ -14,8 +15,9 @@ import javax.xml.ws.Endpoint;
  */
 public class Publisher {
     public static void main(String[] args) {
-        Endpoint.publish("http://localhost:8080/ws/bookmarking", new BookmarkServiceImpl());
-        Endpoint.publish("http://localhost:8080/ws/history", new HistoryServiceImpl());
+        Endpoint.publish("http://localhost:8080/ws/OrganizationRegistration", new OrganizationRegistrationServiceImpl());
+        Endpoint.publish("http://localhost:8080/ws/UniversityService", new UniversityServiceImpl());
+        Endpoint.publish("http://localhost:8080/ws/ScholarshipAcceptance", new ScholarshipAcceptanceServiceImpl());
         System.out.println("Listening at port 8080");
     }
 }
