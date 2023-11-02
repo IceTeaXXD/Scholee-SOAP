@@ -52,16 +52,17 @@ public class UniversityServiceImpl implements UniversityService {
     
     @Override
     @WebMethod
-    public String createUniversity(int rest_uni_id) {
+    public String createUniversity(int rest_uni_id, String university_name) {
         if(validateAPIKey()){
             MessageContext mc = wsContext.getMessageContext();
 
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
 
             try {
-                String query = "INSERT INTO university (rest_uni_id) VALUES (?)";
+                String query = "INSERT INTO university (rest_uni_id, name) VALUES (?,?)";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, rest_uni_id);
+                stmt.setString(2, university_name);
                 stmt.execute();
                 if(stmt.getUpdateCount() > 0){
                     /* Log it and Return Success */

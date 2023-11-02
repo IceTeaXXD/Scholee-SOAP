@@ -16,6 +16,7 @@ create table scholarship_acceptance(
 create table university(
     rest_uni_id int not null,
     php_uni_id int default -1,
+    name String varchar(255),
     primary key (rest_uni_id, php_uni_id)
 );
 

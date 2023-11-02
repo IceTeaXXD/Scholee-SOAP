@@ -16,7 +16,8 @@ import javax.jws.WebService;
 public interface UniversityService {
     @WebMethod
     public String createUniversity(
-            @WebParam(name="rest_uni_id")int rest_uni_id
+            @WebParam(name="rest_uni_id")int rest_uni_id,
+            @WebParam(name="university_name")String university_name
     );
     
     @WebMethod

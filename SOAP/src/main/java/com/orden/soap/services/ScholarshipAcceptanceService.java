@@ -20,4 +20,10 @@ public interface ScholarshipAcceptanceService {
             @WebParam(name="user_id_scholarship")int uis, 
             @WebParam(name="scholarship_id")int sid,
             @WebParam(name="status") String status);
+
+    @WebMethod
+    public String getAcceptanceStatus(
+            @WebParam(name="user_id_student")int uid, 
+            @WebParam(name="user_id_scholarship")int uis, 
+            @WebParam(name="scholarship_id")int sid);
 }

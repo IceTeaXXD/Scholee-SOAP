@@ -8,6 +8,7 @@ import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -68,6 +69,35 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
                     Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
+                }else{
+                    return "Fail";
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return "Fail";
+            }
+        }else{
+            return "Illegal Process";
+        }
+    }
+
+    @Override
+    public String getAcceptanceStatus(int uid, int uis, int sid) {
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            try {
+                String query = "SELECT status FROM scholarship_acceptance WHERE user_id_student = ? AND user_id_scholarship = ? AND scholarship_id = ?";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, uid);
+                stmt.setInt(2, uis);
+                stmt.setInt(3, sid);
+                ResultSet rs = stmt.executeQuery();
+
+                if(rs.next()){
+                    Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    return rs.getString("status");
                 }else{
                     return "Fail";
                 }
