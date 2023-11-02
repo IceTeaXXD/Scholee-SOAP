@@ -24,4 +24,9 @@ public interface OrganizationRegistrationService {
             @WebParam(name="org_id_rest")int org_id_rest,
             @WebParam(name="referral_code")String referral
     );
+
+    @WebMethod
+    public String validateReferralCode(
+            @WebParam(name="referral_code")String referral
+    );
 }

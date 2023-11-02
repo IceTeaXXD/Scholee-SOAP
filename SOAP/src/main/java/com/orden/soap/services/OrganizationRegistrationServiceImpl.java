@@ -9,6 +9,7 @@ import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 import java.security.SecureRandom;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Base64;
 import java.util.logging.Level;
@@ -104,31 +105,23 @@ public class OrganizationRegistrationServiceImpl implements OrganizationRegistra
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if(validateAPIKey()){
             try {
-                String query = "SELECT org_id_php FROM organization_registration WHERE referral_code = (?)";
+                String query = "UPDATE organization_registration SET org_id_rest = ? WHERE referral_code = ? AND org_id_rest = -1";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                stmt.setString(1, referral);
+                stmt.setInt(1, org_id_rest);
+                stmt.setString(2, referral);
+                stmt.execute();
                 
-                if(stmt.execute()){
-                    query = "UPDATE organization_registration SET org_id_rest = ? WHERE referral_code = ?";
-                    stmt = db.getConnection().prepareStatement(query);
-                    stmt.setInt(1, org_id_rest);
-                    stmt.setString(2, referral);
-                    stmt.execute();
-                    
-                    String returnVal;
-                    
-                    if(stmt.getUpdateCount() > 0){
-                        Logging log = new Logging("HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
-                        log.insertLogging();
-                        returnVal = "Register Success";
-                    }else{
-                        returnVal = "Register Unsuccessful";
-                    }
-                    
-                    return returnVal;
+                String returnVal;
+                
+                if(stmt.getUpdateCount() > 0){
+                    Logging log = new Logging("HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    returnVal = "Register Success";
                 }else{
-                    return "Fail";
+                    returnVal = "Register Unsuccessful";
                 }
+                
+                return returnVal;
             } catch (SQLException ex) {
                 Logger.getLogger(OrganizationRegistrationServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -136,5 +129,33 @@ public class OrganizationRegistrationServiceImpl implements OrganizationRegistra
             return "Illegal Process";
         }
         return "Failed";
+    }
+
+    @Override
+    @WebMethod
+    public String validateReferralCode(String referral) {
+        MessageContext mc = wsContext.getMessageContext();
+        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+        if(validateAPIKey()){
+            try{
+                String query = "SELECT org_id_php FROM organization_registration WHERE referral_code = (?) AND org_id_rest = -1";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setString(1, referral);
+                ResultSet resultSet = stmt.executeQuery();
+                Logging log = new Logging("Checking Referral Code", exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                if (resultSet.next() && !resultSet.next()) {
+                    // A result was found for the given referral code, and no additional rows are present
+                    return "True";
+                }else{
+                    return "False";
+                }
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+                return "Failed";
+            }
+        }else{
+            return "Illegal Process";
+        }
     }   
 }
