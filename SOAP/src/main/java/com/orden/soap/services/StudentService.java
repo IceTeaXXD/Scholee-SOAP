@@ -15,6 +15,8 @@ import javax.jws.WebService;
 public interface StudentService {
     @WebMethod
     public String registerStudent(
-            @WebParam(name="std_id_php")int std_id_php
+            @WebParam(name="user_id")int user_id,
+            @WebParam(name="rest_uni_id")int rest_uni_id,
+            @WebParam(name="php_uni_id")int php_uni_id
     );
 }
