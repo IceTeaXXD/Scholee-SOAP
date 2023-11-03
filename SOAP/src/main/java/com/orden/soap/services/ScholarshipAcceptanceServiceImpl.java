@@ -52,25 +52,35 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
     
     @Override
     @WebMethod
-    public String setAcceptance(int uid, int uis, int sid, String status) {
+    public String registerScholarship(int uid, int uis, int sid) {
         if(validateAPIKey()){
             MessageContext mc = wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
-                String query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?)";
+                /* Find the REST Scholarship_ID */
+                String query = "SELECT scholarship_id_rest FROM scholarship WHERE user_id_scholarship_php = ? AND scholarship_id_php = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(1, uid);
-                stmt.setInt(2, uis);
-                stmt.setInt(3, sid);
-                stmt.setString(4, status);
-                stmt.execute();
+                ResultSet rs = stmt.executeQuery();
 
-                if(stmt.getUpdateCount() > 0){
-                    Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
-                    log.insertLogging();
-                    return "Success";
+                if(rs.next() && rs.getInt("scholarship_id_rest") != -1){
+                    query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?,?)";
+                    stmt = db.getConnection().prepareStatement(query);
+                    stmt.setInt(1, uid);
+                    stmt.setInt(2, uis);
+                    stmt.setInt(3, sid);
+                    stmt.setInt(4, rs.getInt("scholarship_id_rest"));
+                    stmt.setString(5, "waiting");
+                    stmt.execute();
+
+                    if(stmt.getUpdateCount() > 0){
+                        Logging log = new Logging("REGISTERED WITH STATUS WAITING", exchange.getRemoteAddress().getAddress().getHostAddress());
+                        log.insertLogging();
+                        return "Success";
+                    }else{
+                        return "Fail";
+                    }
                 }else{
-                    return "Fail";
+                    return "Failed";
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -109,5 +119,34 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
             return "Illegal Process";
         }
     }
-    
+
+    @Override
+    @WebMethod
+    public String setAcceptance(int uid, int sid_rest, String status) {
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            try {
+                String query = "UPDATE scholarship_acceptance SET status = ? WHERE user_id_student = ? AND scholarship_id_rest = ?";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setString(1, status);
+                stmt.setInt(2, uid);
+                stmt.setInt(3, sid_rest);
+                stmt.execute();
+
+                if(stmt.getUpdateCount() > 0){
+                    Logging log = new Logging("REGISTERED WITH STATUS WAITING", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    return "Success";
+                }else{
+                    return "Fail";
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return "Fail";
+            }
+        }else{
+            return "Illegal Process";
+        }
+    }
 }

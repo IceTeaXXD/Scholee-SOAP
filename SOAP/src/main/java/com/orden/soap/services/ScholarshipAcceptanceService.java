@@ -15,10 +15,15 @@ import javax.jws.WebService;
 @WebService
 public interface ScholarshipAcceptanceService {
     @WebMethod
-    public String setAcceptance(
+    public String registerScholarship(
             @WebParam(name="user_id_student")int uid, 
             @WebParam(name="user_id_scholarship")int uis, 
-            @WebParam(name="scholarship_id")int sid,
+            @WebParam(name="scholarship_id")int sid);
+
+    @WebMethod
+    public String setAcceptance(
+            @WebParam(name="user_id_student")int uid, 
+            @WebParam(name="scholarship_id_rest")int sid_rest,
             @WebParam(name="status") String status);
 
     @WebMethod
