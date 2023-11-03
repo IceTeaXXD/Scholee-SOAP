@@ -7,6 +7,7 @@ package com.orden.soap;
 import com.orden.soap.services.OrganizationRegistrationServiceImpl;
 import com.orden.soap.services.ScholarshipAcceptanceServiceImpl;
 import com.orden.soap.services.UniversityServiceImpl;
+import com.orden.soap.services.StudentServiceImpl;
 import javax.xml.ws.Endpoint;
 
 /**
@@ -18,6 +19,7 @@ public class Publisher {
         Endpoint.publish("http://localhost:8080/ws/OrganizationRegistration", new OrganizationRegistrationServiceImpl());
         Endpoint.publish("http://localhost:8080/ws/UniversityService", new UniversityServiceImpl());
         Endpoint.publish("http://localhost:8080/ws/ScholarshipAcceptance", new ScholarshipAcceptanceServiceImpl());
+        Endpoint.publish("http://localhost:8080/ws/StudentService", new StudentServiceImpl());
         System.out.println("Listening at port 8080");
     }
 }

@@ -52,18 +52,20 @@ public class StudentServiceImpl implements StudentService{
     
     @Override
     @WebMethod
-    public String registerStudent(int std_id_php) {
+    public String registerStudent(int user_id, int rest_uni_id, int php_uni_id) {
+        MessageContext mc = wsContext.getMessageContext();
+        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if (validateAPIKey()) {
-            String query = "INSERT INTO student (std_id_php) VALUES (?)";
-            String returnVal;
-            MessageContext mc = wsContext.getMessageContext();
-            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
+                String query = "INSERT INTO students (user_id, rest_uni_id, php_uni_id) VALUES (?,?,?)";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                stmt.setInt(1, std_id_php);
+                stmt.setInt(1, user_id);
+                stmt.setInt(2, rest_uni_id);
+                stmt.setInt(3, php_uni_id);
 
                 stmt.execute();
 
+                String returnVal;
                 if (stmt.getUpdateCount() > 0) {
                     /* TODO: Add SOAP or REST Information on Description */
                     Logging log = new Logging("REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
