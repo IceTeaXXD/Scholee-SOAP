@@ -15,7 +15,7 @@ import javax.jws.WebService;
 @WebService
 public interface ScholarshipAcceptanceService {
     @WebMethod
-    public String registerScholarship(
+    public String registerScholarshipApplication(
             @WebParam(name="user_id_student")int uid, 
             @WebParam(name="user_id_scholarship")int uis, 
             @WebParam(name="scholarship_id")int sid);

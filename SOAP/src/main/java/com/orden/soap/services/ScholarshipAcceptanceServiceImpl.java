@@ -52,7 +52,7 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
     
     @Override
     @WebMethod
-    public String registerScholarship(int uid, int uis, int sid) {
+    public String registerScholarshipApplication(int uid, int uis, int sid) {
         if(validateAPIKey()){
             MessageContext mc = wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
@@ -60,8 +60,10 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
                 /* Find the REST Scholarship_ID */
                 String query = "SELECT scholarship_id_rest FROM scholarship WHERE user_id_scholarship_php = ? AND scholarship_id_php = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, uis);
+                stmt.setInt(2, sid);
                 ResultSet rs = stmt.executeQuery();
-
+                
                 if(rs.next() && rs.getInt("scholarship_id_rest") != -1){
                     query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?,?)";
                     stmt = db.getConnection().prepareStatement(query);
