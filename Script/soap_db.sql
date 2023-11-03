@@ -7,10 +7,19 @@ create table organization_registration(
 
 create table scholarship_acceptance(
     user_id_student int not null,
-    user_id_scholarship int not null,
-    scholarship_id int not null,
-    status enum('accepted', 'rejected'),
-    primary key (user_id_student, user_id_scholarship, scholarship_id)
+    user_id_scholarship_php int not null,
+    scholarship_id_php int not null,
+    scholarship_id_rest int not null,
+    status enum('accepted', 'rejected', 'waiting'),
+    primary key (user_id_student, user_id_scholarship_php, scholarship_id_php, scholarship_id_rest)
+);
+
+create table scholarship(
+    user_id_scholarship_php int not null,
+    scholarship_id_php int not null,
+    user_id_scholarship_rest int not null,
+    scholarship_id_rest int default -1,
+    primary key(user_id_scholarship_php, scholarship_id_php, user_id_scholarship_rest, scholarship_id_rest)
 );
 
 create table university(
