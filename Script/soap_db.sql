@@ -23,7 +23,7 @@ create table university(
 create table students(
     user_id int not null,
     rest_uni_id int not null,
-    php_uni_id int,
+    php_uni_id int not null,
     primary key (user_id, rest_uni_id, php_uni_id),
     foreign key (rest_uni_id) references university(rest_uni_id)
 );
