@@ -4,7 +4,6 @@ import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 
-import java.lang.reflect.Executable;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -45,7 +44,7 @@ public class ScholarshipServiceImpl implements ScholarshipService{
     
     @Override
     @WebMethod
-    public String registerScholarship(int uis_php, int sid_php) {
+    public String registerScholarshipApplication(int uis_php, int sid_php) {
         MessageContext mc = wsContext.getMessageContext();    
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if(validateAPIKey()){

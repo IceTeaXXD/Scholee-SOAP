@@ -7,7 +7,7 @@ import javax.jws.WebService;
 @WebService
 public interface ScholarshipService {
     @WebMethod
-    public String registerScholarship(
+    public String registerScholarshipApplication(
         @WebParam(name = "user_id_scholarship_php") int uis_php,
         @WebParam(name = "scholarship_id_php") int sid_php
     );
