@@ -16,26 +16,28 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import java.util.ArrayList;
+import com.orden.soap.model.University;
 
 /**
  *
  * @author Matthew
  */
-@WebService(endpointInterface="com.orden.soap.services.UniversityService")
+@WebService(endpointInterface = "com.orden.soap.services.UniversityService")
 public class UniversityServiceImpl implements UniversityService {
-    
+
     private static final Database db = new Database();
-    
+
     @Resource
     WebServiceContext wsContext;
-    
+
     public Boolean validateAPIKey() {
         try {
             MessageContext mc = wsContext.getMessageContext();
-            
+
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
-            
+
             if (apiKey != null && apiKey.equals("shortT_Key")) {
                 System.out.println("API-KEY: " + apiKey);
                 return true;
@@ -43,17 +45,17 @@ public class UniversityServiceImpl implements UniversityService {
                 System.out.println("Invalid API-KEY: " + apiKey);
                 return false;
             }
-            
+
         } catch (Exception e) {
             e.printStackTrace();
             return false; // Handle exceptions as needed
         }
     }
-    
+
     @Override
     @WebMethod
     public String createUniversity(int rest_uni_id, String university_name) {
-        if(validateAPIKey()){
+        if (validateAPIKey()) {
             MessageContext mc = wsContext.getMessageContext();
 
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
@@ -64,19 +66,20 @@ public class UniversityServiceImpl implements UniversityService {
                 stmt.setInt(1, rest_uni_id);
                 stmt.setString(2, university_name);
                 stmt.execute();
-                if(stmt.getUpdateCount() > 0){
+                if (stmt.getUpdateCount() > 0) {
                     /* Log it and Return Success */
-                    Logging log = new Logging("REST UNIVERSITY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("REST UNIVERSITY ADD",
+                            exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
-                }else{
+                } else {
                     return "Failed";
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 return "Failed";
             }
-        }else{
+        } else {
             return "Illegal Process";
         }
     }
@@ -84,7 +87,7 @@ public class UniversityServiceImpl implements UniversityService {
     @Override
     @WebMethod
     public String setPHPId(int php_uni_id, int rest_uni_id) {
-        if(validateAPIKey()){
+        if (validateAPIKey()) {
             MessageContext mc = wsContext.getMessageContext();
 
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
@@ -96,21 +99,54 @@ public class UniversityServiceImpl implements UniversityService {
                 stmt.setInt(2, rest_uni_id);
 
                 stmt.execute();
-                if(stmt.getUpdateCount() > 0){
+                if (stmt.getUpdateCount() > 0) {
                     /* Log it and Return Success */
-                    Logging log = new Logging("PHP UNIVERSITY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("PHP UNIVERSITY ADD",
+                            exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
-                }else{
+                } else {
                     return "Failed";
                 }
             } catch (SQLException ex) {
                 Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
                 return "Failed";
             }
-        }else{
+        } else {
             return "Illegal Process";
         }
     }
-    
+
+    @Override
+    @WebMethod
+    public ArrayList<University> getAllUniversities() {
+        if (validateAPIKey()) {
+            MessageContext mc = wsContext.getMessageContext();
+
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+
+            try {
+                String query = "SELECT * FROM university";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                Logging log = new Logging("UNIVERSITY GET ALL",
+                        exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                stmt.execute();
+                ArrayList<University> universities = new ArrayList<>();
+                while (stmt.getResultSet().next()) {
+                    University uni = new University();
+                    uni.setPhpUniId(stmt.getResultSet().getInt("php_uni_id"));
+                    uni.setRestUniId(stmt.getResultSet().getInt("rest_uni_id"));
+                    uni.setName(stmt.getResultSet().getString("name"));
+                    universities.add(uni);
+                }
+                return universities;
+            } catch (SQLException ex) {
+                Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return null;
+            }
+        } else {
+            return null;
+        }
+    }
 }

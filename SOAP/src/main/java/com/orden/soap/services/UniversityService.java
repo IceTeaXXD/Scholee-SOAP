@@ -7,22 +7,25 @@ package com.orden.soap.services;
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+import java.util.ArrayList;
+import com.orden.soap.model.University;
 
 /**
  *
- * @author Matthew
+ * @author Matthew, Nadil
  */
 @WebService
 public interface UniversityService {
-    @WebMethod
-    public String createUniversity(
-            @WebParam(name="rest_uni_id")int rest_uni_id,
-            @WebParam(name="university_name")String university_name
-    );
-    
-    @WebMethod
-    public String setPHPId(
-            @WebParam(name="php_uni_id") int php_uni_id,
-            @WebParam(name="rest_uni_id") int rest_uni_id
-    );
+        @WebMethod
+        public String createUniversity(
+                        @WebParam(name = "rest_uni_id") int rest_uni_id,
+                        @WebParam(name = "university_name") String university_name);
+
+        @WebMethod
+        public String setPHPId(
+                        @WebParam(name = "php_uni_id") int php_uni_id,
+                        @WebParam(name = "rest_uni_id") int rest_uni_id);
+
+        @WebMethod
+        public ArrayList<University> getAllUniversities();
 }
