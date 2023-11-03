@@ -5,16 +5,14 @@
 package com.orden.soap.database;
 
 import java.sql.*;
-/**
- *
- * @author Matthew
- */
+import io.github.cdimascio.dotenv.Dotenv;
+
 public class Database {
     protected Connection conn;
-     /* USE DOTENV LATER */
-    private static final String URL = "jdbc:mysql://localhost:3306/scholee_soap";
-    private static final String user = "root";
-    private static final String password = "root";
+    Dotenv dotenv = Dotenv.load();
+    private String URL = dotenv.get("DB_URL");
+    private String user = dotenv.get("DB_USER");
+    private String password = dotenv.get("DB_PASSWORD");
     
     public Database(){
         try {
