@@ -5,11 +5,13 @@
 package com.orden.soap.services;
 
 import com.orden.soap.database.Database;
+import com.orden.soap.model.Acceptance;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -94,29 +96,38 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
     }
 
     @Override
-    public String getAcceptanceStatus(int uid) {
-        if(validateAPIKey()){
+    public ArrayList<Acceptance> getAcceptanceStatus(int uid) {
+        if (validateAPIKey()) {
             MessageContext mc = wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
-                String query = "SELECT status FROM scholarship_acceptance WHERE user_id_student = ?";
+                String query = "SELECT user_id_student, user_id_scholarship_php, scholarship_id_php, status FROM scholarship_acceptance WHERE user_id_student = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, uid);
                 ResultSet rs = stmt.executeQuery();
 
-                if(rs.next()){
+                ArrayList<Acceptance> acceptances = new ArrayList<>();
+
+                while (rs.next()) {
+                    Acceptance acceptance = new Acceptance();
+                    acceptance.setUser_id_student(rs.getInt("user_id_student"));
+                    acceptance.setUser_id_scholarship(rs.getInt("user_id_scholarship_php"));
+                    acceptance.setScholarship_id(rs.getInt("scholarship_id_php"));
+                    acceptance.setStatus(rs.getString("status"));
+
                     Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
-                    return rs.getString("status");
-                }else{
-                    return "Fail";
+
+                    acceptances.add(acceptance);
                 }
+
+                return acceptances;
             } catch (SQLException ex) {
                 Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-                return "Fail";
+                return new ArrayList<>();
             }
-        }else{
-            return "Illegal Process";
+        } else {
+            return new ArrayList<>();
         }
     }
 

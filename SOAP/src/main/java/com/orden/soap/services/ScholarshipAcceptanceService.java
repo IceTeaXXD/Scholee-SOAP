@@ -4,9 +4,13 @@
  */
 package com.orden.soap.services;
 
+import java.util.ArrayList;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+
+import com.orden.soap.model.Acceptance;
 
 /**
  *
@@ -27,6 +31,6 @@ public interface ScholarshipAcceptanceService {
             @WebParam(name="status") String status);
 
     @WebMethod
-    public String getAcceptanceStatus(
+    public ArrayList<Acceptance> getAcceptanceStatus(
             @WebParam(name="user_id_student")int uid);
 }
