@@ -94,16 +94,14 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
     }
 
     @Override
-    public String getAcceptanceStatus(int uid, int uis, int sid) {
+    public String getAcceptanceStatus(int uid) {
         if(validateAPIKey()){
             MessageContext mc = wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
-                String query = "SELECT status FROM scholarship_acceptance WHERE user_id_student = ? AND user_id_scholarship = ? AND scholarship_id = ?";
+                String query = "SELECT status FROM scholarship_acceptance WHERE user_id_student = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, uid);
-                stmt.setInt(2, uis);
-                stmt.setInt(3, sid);
                 ResultSet rs = stmt.executeQuery();
 
                 if(rs.next()){
