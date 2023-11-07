@@ -1,0 +1,18 @@
+version: '3'
+services:
+  soap-db:
+    image: mysql:latest
+    ports:
+      - "3309:3306"
+    volumes:
+      - ./script/db:/docker-entrypoint-initdb.d
+    environment:
+      - MYSQL_DATABASE=scholee_soap
+      - MYSQL_USER=scholee
+      - MYSQL_PASSWORD=password # this should live in a env var
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+  soap-service:
+    build: .
+    image: soap-service:latest
+    ports:
+      - "8080:8080"

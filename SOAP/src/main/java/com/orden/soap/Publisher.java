@@ -17,11 +17,11 @@ import javax.xml.ws.Endpoint;
  */
 public class Publisher {
     public static void main(String[] args) {
-        Endpoint.publish("http://localhost:8080/ws/OrganizationRegistration", new OrganizationRegistrationServiceImpl());
-        Endpoint.publish("http://localhost:8080/ws/UniversityService", new UniversityServiceImpl());
-        Endpoint.publish("http://localhost:8080/ws/ScholarshipAcceptance", new ScholarshipAcceptanceServiceImpl());
-        Endpoint.publish("http://localhost:8080/ws/StudentService", new StudentServiceImpl());
-        Endpoint.publish("http://localhost:8080/ws/ScholarshipService", new ScholarshipServiceImpl());
+        Endpoint.publish("http://0.0.0.0:8080/ws/OrganizationRegistration", new OrganizationRegistrationServiceImpl());
+        Endpoint.publish("http://0.0.0.0:8080/ws/UniversityService", new UniversityServiceImpl());
+        Endpoint.publish("http://0.0.0.0:8080/ws/ScholarshipAcceptance", new ScholarshipAcceptanceServiceImpl());
+        Endpoint.publish("http://0.0.0.0:8080/ws/StudentService", new StudentServiceImpl());
+        Endpoint.publish("http://0.0.0.0:8080/ws/ScholarshipService", new ScholarshipServiceImpl());
         System.out.println("Listening at port 8080");
     }
 }
