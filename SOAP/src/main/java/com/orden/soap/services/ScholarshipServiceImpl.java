@@ -2,11 +2,13 @@ package com.orden.soap.services;
 
 import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
+import com.orden.soap.model.Scholarship;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.annotation.Resource;
 import javax.jws.WebMethod;
@@ -125,6 +127,41 @@ public class ScholarshipServiceImpl implements ScholarshipService{
             }
         }else{
             return "Illegal Process";
+        }
+    }
+
+    @Override
+    @WebMethod
+    public ArrayList<Scholarship> getAllScholarship() {
+        MessageContext mc = wsContext.getMessageContext();    
+        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+        if(validateAPIKey()){
+            try{
+                Logging log = new Logging("SCHOLARSHIP GET ALL",
+                        exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+
+                String query = "SELECT * FROM scholarship";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                ResultSet resultSet = stmt.executeQuery();
+
+                ArrayList<Scholarship> scholarships = new ArrayList<>();
+                while(resultSet.next()){
+                    Scholarship scholarship = new Scholarship();
+                    scholarship.setScholarship_id_php(resultSet.getInt("scholarship_id_php"));
+                    scholarship.setScholarship_id_rest(resultSet.getInt("scholarship_id_rest"));
+                    scholarship.setUser_id_scholarship_php(resultSet.getInt("user_id_scholarship_php"));
+                    scholarship.setUser_id_scholarship_rest(resultSet.getInt("user_id_scholarship_rest"));
+
+                    scholarships.add(scholarship);
+                }
+                return scholarships;
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+                return null;
+            }
+        }else{
+            return null; 
         }
     }
     

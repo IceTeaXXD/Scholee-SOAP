@@ -1,8 +1,12 @@
 package com.orden.soap.services;
 
+import java.util.ArrayList;
+
 import javax.jws.WebMethod;
 import javax.jws.WebParam;
 import javax.jws.WebService;
+
+import com.orden.soap.model.Scholarship;
 
 @WebService
 public interface ScholarshipService {
@@ -19,4 +23,7 @@ public interface ScholarshipService {
         @WebParam(name = "user_id_scholarship_rest") int uis_rest,
         @WebParam(name = "scholarship_id_rest") int sid_rest
     );
+
+    @WebMethod
+    public ArrayList<Scholarship> getAllScholarship();
 }
