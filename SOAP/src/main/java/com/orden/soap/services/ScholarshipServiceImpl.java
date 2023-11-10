@@ -15,34 +15,13 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import com.orden.soap.model.BaseService;
 
 @WebService(endpointInterface = "com.orden.soap.services.ScholarshipService")
-public class ScholarshipServiceImpl implements ScholarshipService{
+public class ScholarshipServiceImpl extends BaseService implements ScholarshipService{
     private static final Database db = new Database();
-    
     @Resource
     WebServiceContext wsContext;
-
-    public Boolean validateAPIKey() {
-        try {
-            MessageContext mc = wsContext.getMessageContext();
-            
-            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-            String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
-            
-            if (apiKey != null && apiKey.equals("shortT_Key")) {
-                System.out.println("API-KEY: " + apiKey);
-                return true;
-            } else {
-                System.out.println("Invalid API-KEY: " + apiKey);
-                return false;
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Handle exceptions as needed
-        }
-    }
     
     @Override
     @WebMethod

@@ -18,6 +18,7 @@ import javax.jws.WebMethod;
 import javax.jws.WebService;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
+import com.orden.soap.model.BaseService;
 
 /**
  *
@@ -68,6 +69,8 @@ public class StudentServiceImpl implements StudentService{
                 String returnVal;
                 if (stmt.getUpdateCount() > 0) {
                     /* TODO: Add SOAP or REST Information on Description */
+                    String clientAddr = exchange.getRemoteAddress().getAddress().getHostAddress();
+                    System.out.println(clientAddr);
                     Logging log = new Logging("REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
