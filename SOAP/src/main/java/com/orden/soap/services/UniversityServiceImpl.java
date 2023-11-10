@@ -47,7 +47,7 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
                 stmt.execute();
                 if (stmt.getUpdateCount() > 0) {
                     /* Log it and Return Success */
-                    Logging log = new Logging(getSource(), " : REST UNIVERSITY ADD",
+                    Logging log = new Logging(getSource() + " : REST UNIVERSITY ADD",
                             exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
@@ -79,7 +79,7 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
 
                 stmt.execute();
                 if (stmt.getUpdateCount() > 0) {
-                    Logging log = new Logging(getSource(), " : PHP UNIVERSITY ADD",
+                    Logging log = new Logging(getSource() + " : PHP UNIVERSITY ADD",
                             exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
@@ -106,7 +106,7 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
             try {
                 String query = "SELECT * FROM university";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                Logging log = new Logging(getSource(), " : UNIVERSITY GET ALL",
+                Logging log = new Logging(getSource() + " : UNIVERSITY GET ALL",
                         exchange.getRemoteAddress().getAddress().getHostAddress());
                 log.insertLogging();
                 stmt.execute();

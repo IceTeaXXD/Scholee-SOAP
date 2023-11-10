@@ -7,10 +7,8 @@ package com.orden.soap.services;
 import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
-import java.security.SecureRandom;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
-import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.annotation.Resource;
@@ -25,7 +23,7 @@ import com.orden.soap.model.BaseService;
  * @author henryanand
  */
 @WebService(endpointInterface="com.orden.soap.services.StudentService")
-public class StudentServiceImpl implements StudentService{
+public class StudentServiceImpl extends BaseService implements StudentService{
     private static final Database db = new Database();
     
     @Resource
@@ -51,7 +49,7 @@ public class StudentServiceImpl implements StudentService{
                     /* TODO: Add SOAP or REST Information on Description */
                     String clientAddr = exchange.getRemoteAddress().getAddress().getHostAddress();
                     System.out.println(clientAddr);
-                    Logging log = new Logging(getSource(), " : REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging(getSource() +  " : REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
                 } else {

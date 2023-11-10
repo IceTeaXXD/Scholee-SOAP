@@ -37,8 +37,10 @@ public class BaseService {
         }
     }
     
-    public String getRoles() {
-        String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
+    public String getSource() {
+        MessageContext mc = wsContext.getMessageContext();
+        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+        String apiKey = exchange.getRequestHeaders().getFirst("X-API-KEY");
         if (apiKey == dotenv.get("REST_API_KEY")) {
             return "REST";
         } else {

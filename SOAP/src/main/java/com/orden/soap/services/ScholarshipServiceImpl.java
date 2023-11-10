@@ -48,7 +48,7 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
 
                     /* Check if the execution is successful or not */
                     if(stmt.getUpdateCount() > 0){
-                        Logging log = new Logging(getSource(), " : SCHOLARSHIP ADDED", exchange.getRemoteAddress().getAddress().getHostAddress());
+                        Logging log = new Logging(getSource() + " : SCHOLARSHIP ADDED", exchange.getRemoteAddress().getAddress().getHostAddress());
                         log.insertLogging();
                         return "Scholarship Added";
                     }else{
@@ -92,7 +92,7 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
                     stmt.execute();
 
                     if(stmt.getUpdateCount() > 0){
-                        Logging log = new Logging(getSource(), " : REST Scholarship SET", exchange.getRemoteAddress().getAddress().getHostAddress());
+                        Logging log = new Logging(getSource() + " : REST Scholarship SET", exchange.getRemoteAddress().getAddress().getHostAddress());
                         log.insertLogging();
                         return "REST Scholarship SET";
                     }else{
@@ -117,7 +117,7 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if(validateAPIKey()){
             try{
-                Logging log = new Logging(getSource(), " : SCHOLARSHIP GET ALL",
+                Logging log = new Logging(getSource() +  " : SCHOLARSHIP GET ALL",
                         exchange.getRemoteAddress().getAddress().getHostAddress());
                 log.insertLogging();
 
