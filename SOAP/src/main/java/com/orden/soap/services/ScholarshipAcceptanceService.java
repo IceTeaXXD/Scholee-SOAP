@@ -33,4 +33,11 @@ public interface ScholarshipAcceptanceService {
     @WebMethod
     public ArrayList<Acceptance> getAcceptanceStatus(
             @WebParam(name="user_id_student")int uid);
+
+    @WebMethod
+    public String setScholarshipIDREST(
+            @WebParam(name="user_id_scholarship_php") int uid_php,
+            @WebParam(name="scholarship_id_php") int sid_php,
+            @WebParam(name="scholarship_id_rest") int sid_rest
+    );    
 }

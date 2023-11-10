@@ -161,4 +161,33 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
             return "Illegal Process";
         }
     }
+
+    @Override
+    @WebMethod
+    public String setScholarshipIDREST(int uid_php, int sid_php, int sid_rest) {
+        if(validateAPIKey()){
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            try{
+                String query = "UPDATE scholarship_acceptance SET scholarship_id_rest = ? WHERE user_id_scholarship_php = ? AND scholarship_id_php = ?";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, sid_rest);
+                stmt.setInt(2, uid_php);
+                stmt.setInt(3, sid_php);
+                stmt.execute();
+                if(stmt.getUpdateCount() > 0){
+                    Logging log = new Logging("SET SCHOLARSHIP ID REST", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+                    return "Success";
+                }else{
+                    return "Fail";
+                }
+            } catch (SQLException ex) {
+                Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return "Fail";
+            }
+        }else{
+            return "Illegal Process";
+        }
+    }
 }
