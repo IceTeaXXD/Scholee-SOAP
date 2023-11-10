@@ -101,7 +101,7 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
             MessageContext mc = wsContext.getMessageContext();
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
-                String query = "SELECT user_id_student, user_id_scholarship_php, scholarship_id_php, status FROM scholarship_acceptance WHERE user_id_student = ?";
+                String query = "SELECT user_id_student, user_id_scholarship_php, scholarship_id_rest, scholarship_id_php, status FROM scholarship_acceptance WHERE user_id_student = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, uid);
                 ResultSet rs = stmt.executeQuery();
@@ -112,10 +112,11 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
                     Acceptance acceptance = new Acceptance();
                     acceptance.setUser_id_student(rs.getInt("user_id_student"));
                     acceptance.setUser_id_scholarship(rs.getInt("user_id_scholarship_php"));
-                    acceptance.setScholarship_id(rs.getInt("scholarship_id_php"));
+                    acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
                     acceptance.setStatus(rs.getString("status"));
+                    acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
 
-                    Logging log = new Logging("ACCEPTANCE SET", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("GET ACCEPTANCE SUCCESS", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
 
                     acceptances.add(acceptance);
