@@ -22,13 +22,13 @@ public class BaseService {
             MessageContext mc = wsContext.getMessageContext();
 
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-            String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
+            String apiKey = exchange.getRequestHeaders().getFirst("X-API-KEY");
 
             if (apiKey == dotenv.get("REST_API_KEY") || apiKey == dotenv.get("PHP_API_KEY")) {
-                System.out.println("API-KEY: " + apiKey);
+                System.out.println("X-API-KEY: " + apiKey);
                 return true;
             } else {
-                System.out.println("Invalid API-KEY: " + apiKey);
+                System.out.println("Invalid X-API-KEY: " + apiKey);
                 return false;
             }
         } catch(Exception e) {

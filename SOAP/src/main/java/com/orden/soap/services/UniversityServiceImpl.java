@@ -79,7 +79,6 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
 
                 stmt.execute();
                 if (stmt.getUpdateCount() > 0) {
-                    /* Log it and Return Success */
                     Logging log = new Logging(getSource(), " : PHP UNIVERSITY ADD",
                             exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();

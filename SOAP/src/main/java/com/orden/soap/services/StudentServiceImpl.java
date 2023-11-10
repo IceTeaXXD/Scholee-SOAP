@@ -30,26 +30,6 @@ public class StudentServiceImpl implements StudentService{
     
     @Resource
     WebServiceContext wsContext;
-    public Boolean validateAPIKey() {
-        try {
-            MessageContext mc = wsContext.getMessageContext();
-            
-            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-            String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
-            
-            if (apiKey != null && apiKey.equals("shortT_Key")) {
-                System.out.println("API-KEY: " + apiKey);
-                return true;
-            } else {
-                System.out.println("Invalid API-KEY: " + apiKey);
-                return false;
-            }
-            
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false; // Handle exceptions as needed
-        }
-    }
     
     @Override
     @WebMethod
