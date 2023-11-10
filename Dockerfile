@@ -6,6 +6,6 @@ COPY SOAP/src ./src
 COPY SOAP/pom.xml .
 COPY SOAP/.env /app/.env
 
-RUN mvn clean package
+RUN mvn clean install
 
 CMD ["mvn", "exec:java"]

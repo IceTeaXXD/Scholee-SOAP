@@ -1,7 +1,7 @@
 version: '3'
 services:
   soap-db:
-    image: mysql:latest
+    image: mysql:8.0
     ports:
       - "3309:3306"
     volumes:
@@ -9,10 +9,14 @@ services:
     environment:
       - MYSQL_DATABASE=scholee_soap
       - MYSQL_USER=scholee
-      - MYSQL_PASSWORD=password # this should live in a env var
-      - MYSQL_ALLOW_EMPTY_PASSWORD=1 # equivalent to True
+      - MYSQL_PASSWORD=password
+      - MYSQL_ALLOW_EMPTY_PASSWORD=1
   soap-service:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: soap-service:latest
     ports:
       - "8080:8080"
+    depends_on:
+      - soap-db
