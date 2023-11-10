@@ -50,16 +50,14 @@ public class ScholarshipServiceImpl implements ScholarshipService{
         MessageContext mc = wsContext.getMessageContext();    
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if(validateAPIKey()){
-            /* Select from Organization Registration. Check if organization has registered or not */
             try {
                 String query = "SELECT org_id_rest FROM organization_registration WHERE org_id_php = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, uis_php);
 
                 ResultSet resultSet = stmt.executeQuery();
-
-                if(resultSet.next() && resultSet.getInt("org_id_rest") != -1){
-                    /* Insert into Scholarship */
+                
+                if(resultSet.next()){
                     query = "INSERT INTO scholarship (user_id_scholarship_php, scholarship_id_php, user_id_scholarship_rest) " +
                             "VALUES (?,?,?)";
                     stmt = db.getConnection().prepareStatement(query);
@@ -78,7 +76,7 @@ public class ScholarshipServiceImpl implements ScholarshipService{
                         return "Failed";
                     }
                 }else{
-                    return "You haven't activated your account";
+                    return "There is no organization with that info";
                 }
             } catch (SQLException e) {
                 e.printStackTrace();

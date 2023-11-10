@@ -117,6 +117,23 @@ public class OrganizationRegistrationServiceImpl implements OrganizationRegistra
                     Logging log = new Logging("HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
+
+                    /* Kalau sudah punya scholarship update dengan org_id_rest */
+                    query = "SELECT org_id_php FROM organization_registration WHERE org_id_rest = ?";
+                    stmt = db.getConnection().prepareStatement(query);
+                    stmt.setInt(1, org_id_rest);
+
+                    ResultSet rs = stmt.executeQuery();
+
+                    if(rs.next()){
+                        query = "UPDATE scholarship SET user_id_scholarship_rest = ? WHERE user_id_scholarship_php = ?";
+                        stmt = db.getConnection().prepareStatement(query);
+                        stmt.setInt(1, org_id_rest);
+                        stmt.setInt(2, rs.getInt("org_id_php"));
+
+                        stmt.execute();
+                    }
+
                 }else{
                     returnVal = "Register Unsuccessful";
                 }
