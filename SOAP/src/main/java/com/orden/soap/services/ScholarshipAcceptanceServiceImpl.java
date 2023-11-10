@@ -66,7 +66,7 @@ public class ScholarshipAcceptanceServiceImpl implements ScholarshipAcceptanceSe
                 stmt.setInt(2, sid);
                 ResultSet rs = stmt.executeQuery();
                 
-                if(rs.next() && rs.getInt("scholarship_id_rest") != -1){
+                if(rs.next()){
                     query = "INSERT INTO scholarship_acceptance VALUES (?,?,?,?,?)";
                     stmt = db.getConnection().prepareStatement(query);
                     stmt.setInt(1, uid);
