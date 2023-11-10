@@ -97,8 +97,11 @@ public class ScholarshipServiceImpl implements ScholarshipService{
         if(validateAPIKey()){
             try{
                 /* Validate if sid_rest is -1 or not */
-                String query = "SELECT scholarship_id_rest FROM scholarship";
+                String query = "SELECT scholarship_id_rest FROM scholarship WHERE user_id_scholarship_php = ? AND scholarship_id_php = ? AND user_id_scholarship_rest = ?";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, uis_php);
+                stmt.setInt(2, sid_php);
+                stmt.setInt(3, uis_rest);
                 ResultSet resultSet = stmt.executeQuery();
 
                 if(resultSet.next() && resultSet.getInt("scholarship_id_rest") == -1){
