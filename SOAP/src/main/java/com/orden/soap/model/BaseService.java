@@ -37,5 +37,12 @@ public class BaseService {
         }
     }
     
-
+    public String getRoles() {
+        String apiKey = exchange.getRequestHeaders().getFirst("API-KEY");
+        if (apiKey == dotenv.get("REST_API_KEY")) {
+            return "REST";
+        } else {
+            return "PHP";
+        }
+    }
 }

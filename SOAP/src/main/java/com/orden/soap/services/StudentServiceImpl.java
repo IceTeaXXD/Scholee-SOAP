@@ -71,7 +71,7 @@ public class StudentServiceImpl implements StudentService{
                     /* TODO: Add SOAP or REST Information on Description */
                     String clientAddr = exchange.getRemoteAddress().getAddress().getHostAddress();
                     System.out.println(clientAddr);
-                    Logging log = new Logging("REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging(getSource(), " : REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
                 } else {

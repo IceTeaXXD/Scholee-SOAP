@@ -56,8 +56,7 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
                 stmt.execute();
 
                 if(stmt.getUpdateCount() > 0){
-                    /* TODO: Add SOAP or REST Information on Description */
-                    Logging log = new Logging("REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging(getSource()," : REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
                 }else{
@@ -94,7 +93,7 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
                 String returnVal;
                 
                 if(stmt.getUpdateCount() > 0){
-                    Logging log = new Logging("HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging(getSource(), " : HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
 
@@ -139,7 +138,7 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setString(1, referral);
                 ResultSet resultSet = stmt.executeQuery();
-                Logging log = new Logging("Checking Referral Code", exchange.getRemoteAddress().getAddress().getHostAddress());
+                Logging log = new Logging(getSource()," : Checking Referral Code", exchange.getRemoteAddress().getAddress().getHostAddress());
                 log.insertLogging();
                 if (resultSet.next() && !resultSet.next()) {
                     // A result was found for the given referral code, and no additional rows are present
