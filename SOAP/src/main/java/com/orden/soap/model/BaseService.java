@@ -24,7 +24,7 @@ public class BaseService {
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             String apiKey = exchange.getRequestHeaders().getFirst("X-API-KEY");
 
-            if (apiKey == dotenv.get("REST_API_KEY") || apiKey == dotenv.get("PHP_API_KEY")) {
+            if (apiKey.equals(dotenv.get("REST_API_KEY")) || apiKey.equals(dotenv.get("PHP_API_KEY"))) {
                 System.out.println("X-API-KEY: " + apiKey);
                 return true;
             } else {
@@ -41,7 +41,7 @@ public class BaseService {
         MessageContext mc = wsContext.getMessageContext();
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         String apiKey = exchange.getRequestHeaders().getFirst("X-API-KEY");
-        if (apiKey == dotenv.get("REST_API_KEY")) {
+        if (apiKey.equals(dotenv.get("REST_API_KEY"))) {
             return "REST";
         } else {
             return "PHP";
