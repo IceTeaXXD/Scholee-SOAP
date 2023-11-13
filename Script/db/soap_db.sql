@@ -19,6 +19,7 @@ create table scholarship(
     scholarship_id_php int not null,
     user_id_scholarship_rest int not null,
     scholarship_id_rest int default -1,
+    view_count int default 0,
     primary key(user_id_scholarship_php, scholarship_id_php, user_id_scholarship_rest, scholarship_id_rest)
 );
 
