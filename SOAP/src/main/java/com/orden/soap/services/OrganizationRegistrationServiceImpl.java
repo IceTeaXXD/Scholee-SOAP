@@ -4,7 +4,6 @@
  */
 package com.orden.soap.services;
 
-import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 import java.security.SecureRandom;
@@ -14,10 +13,8 @@ import java.sql.SQLException;
 import java.util.Base64;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import com.orden.soap.model.BaseService;
 
@@ -26,13 +23,7 @@ import com.orden.soap.model.BaseService;
  * @author Matthew
  */
 @WebService(endpointInterface="com.orden.soap.services.OrganizationRegistrationService")
-public class OrganizationRegistrationServiceImpl extends BaseService implements OrganizationRegistrationService {
-    
-    private static final Database db = new Database();
-    
-    @Resource
-    WebServiceContext wsContext;
-    
+public class OrganizationRegistrationServiceImpl extends BaseService implements OrganizationRegistrationService {    
     @Override
     @WebMethod
     public String registerOrganization(int org_id_php) {
@@ -56,7 +47,9 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
                 stmt.execute();
 
                 if(stmt.getUpdateCount() > 0){
-                    Logging log = new Logging(getSource() + " : REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("registerOrganization",
+                                                "REQUEST-SERVICE: " + getSource() + "; org_id_php: " + org_id_php, 
+                                                exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
                 }else{
@@ -93,7 +86,9 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
                 String returnVal;
                 
                 if(stmt.getUpdateCount() > 0){
-                    Logging log = new Logging(getSource() + " : HISTORY ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("createRESTId",
+                                                "REQUEST-SERVICE: " + getSource() + "; org_id_rest: " + org_id_rest + "; referral: " + referral, 
+                                                exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
 
@@ -138,7 +133,9 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setString(1, referral);
                 ResultSet resultSet = stmt.executeQuery();
-                Logging log = new Logging(getSource() + " : Checking Referral Code", exchange.getRemoteAddress().getAddress().getHostAddress());
+                Logging log = new Logging("validateReferralCode",
+                                            "REQUEST-SERVICE: " + getSource() + "; referral: " + referral,  
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
                 log.insertLogging();
                 if (resultSet.next() && !resultSet.next()) {
                     // A result was found for the given referral code, and no additional rows are present

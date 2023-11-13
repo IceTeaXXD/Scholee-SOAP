@@ -4,7 +4,6 @@
  */
 package com.orden.soap.services;
 
-import com.orden.soap.database.Database;
 import com.orden.soap.model.Acceptance;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
@@ -14,10 +13,8 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import com.orden.soap.model.BaseService;
 
@@ -26,12 +23,7 @@ import com.orden.soap.model.BaseService;
  * @author Matthew
  */
 @WebService(endpointInterface="com.orden.soap.services.ScholarshipAcceptanceService")
-public class ScholarshipAcceptanceServiceImpl extends BaseService implements ScholarshipAcceptanceService {
-    private static final Database db = new Database();
-    
-    @Resource
-    WebServiceContext wsContext;
-    
+public class ScholarshipAcceptanceServiceImpl extends BaseService implements ScholarshipAcceptanceService {    
     @Override
     @WebMethod
     public String registerScholarshipApplication(int uid, int uis, int sid) {
@@ -57,7 +49,9 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                     stmt.execute();
 
                     if(stmt.getUpdateCount() > 0){
-                        Logging log = new Logging(getSource() + " : REGISTERED WITH STATUS WAITING", exchange.getRemoteAddress().getAddress().getHostAddress());
+                        Logging log = new Logging("registerScholarshipApplication",
+                                                "REQUEST-SERVICE: " + getSource() + "; uid: " + uid + "; uis: " + uis + "; sid: " + sid, 
+                                                exchange.getRemoteAddress().getAddress().getHostAddress());
                         log.insertLogging();
                         return "Success";
                     }else{
@@ -95,13 +89,14 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                     acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
                     acceptance.setStatus(rs.getString("status"));
                     acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
-
-                    Logging log = new Logging(getSource() +  " : GET ACCEPTANCE SUCCESS", exchange.getRemoteAddress().getAddress().getHostAddress());
-                    log.insertLogging();
-
                     acceptances.add(acceptance);
                 }
 
+                Logging log = new Logging("getAcceptanceStatus",
+                                            "REQUEST-SERVICE: " + getSource() + "; uid: " + uid, 
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                
                 return acceptances;
             } catch (SQLException ex) {
                 Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
@@ -127,7 +122,9 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                 stmt.execute();
 
                 if(stmt.getUpdateCount() > 0){
-                    Logging log = new Logging(getSource() +  " : REGISTERED WITH STATUS WAITING", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("setAcceptance",
+                                            "REQUEST-SERVICE: " + getSource() + "; uid: " + uid + "; sid_rest: " + sid_rest + "; status: " + status, 
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
                 }else{
@@ -156,7 +153,9 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                 stmt.setInt(3, sid_php);
                 stmt.execute();
                 if(stmt.getUpdateCount() > 0){
-                    Logging log = new Logging(getSource() + " : SET SCHOLARSHIP ID REST", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("setScholarshipIDREST",
+                                        "REQUEST-SERVICE: " + getSource() + "; uid_php: " + uid_php + "; sid_php: " + sid_php + "; sid_rest: " + sid_rest,
+                                        exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
                 }else{

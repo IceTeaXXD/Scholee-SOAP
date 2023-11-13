@@ -26,4 +26,10 @@ public interface ScholarshipService {
 
     @WebMethod
     public ArrayList<Scholarship> getAllScholarship();
+
+    @WebMethod
+    public void addScholarshipView(
+        @WebParam(name = "user_id_scholarship_php") int uis_php,
+        @WebParam(name = "scholarship_id_php") int sid_php
+    );
 }
