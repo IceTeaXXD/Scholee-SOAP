@@ -191,7 +191,9 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                     acceptance.setStatus(rs.getString("status"));
                     acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
 
-                    Logging log = new Logging(getSource() + " : GET ALL ACCEPTANCE SUCCESS", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("getAllScholarshipAcceptanc",
+                                            "REQUEST-SERVICE: " + getSource(), 
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
 
                     acceptances.add(acceptance);
