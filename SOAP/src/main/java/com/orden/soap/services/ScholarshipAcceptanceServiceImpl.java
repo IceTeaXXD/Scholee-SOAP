@@ -170,4 +170,41 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
             return "Illegal Process";
         }
     }
+
+    @Override
+    @WebMethod
+    public ArrayList<Acceptance> getAllScholarshipAcceptance() {
+        if (validateAPIKey()) {
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            try {
+                String query = "SELECT user_id_student, user_id_scholarship_php, scholarship_id_rest, scholarship_id_php, status FROM scholarship_acceptance";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                ResultSet rs = stmt.executeQuery();
+
+                ArrayList<Acceptance> acceptances = new ArrayList<>();
+
+                while (rs.next()) {
+                    Acceptance acceptance = new Acceptance();
+                    acceptance.setUser_id_student(rs.getInt("user_id_student"));
+                    acceptance.setUser_id_scholarship(rs.getInt("user_id_scholarship_php"));
+                    acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
+                    acceptance.setStatus(rs.getString("status"));
+                    acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
+
+                    Logging log = new Logging(getSource() + " : GET ALL ACCEPTANCE SUCCESS", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    log.insertLogging();
+
+                    acceptances.add(acceptance);
+                }
+
+                return acceptances;
+            } catch (SQLException ex) {
+                Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return new ArrayList<>();
+            }
+        } else {
+            return new ArrayList<>();
+        }
+    }
 }
