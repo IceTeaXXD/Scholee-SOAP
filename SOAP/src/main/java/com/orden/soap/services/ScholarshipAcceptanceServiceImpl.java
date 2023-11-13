@@ -89,15 +89,14 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                     acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
                     acceptance.setStatus(rs.getString("status"));
                     acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
-
-                    Logging log = new Logging("getAcceptanceStatus",
-                                                "REQUEST-SERVICE: " + getSource() + "; uid: " + uid, 
-                                                exchange.getRemoteAddress().getAddress().getHostAddress());
-                    log.insertLogging();
-
                     acceptances.add(acceptance);
                 }
 
+                Logging log = new Logging("getAcceptanceStatus",
+                                            "REQUEST-SERVICE: " + getSource() + "; uid: " + uid, 
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                
                 return acceptances;
             } catch (SQLException ex) {
                 Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);

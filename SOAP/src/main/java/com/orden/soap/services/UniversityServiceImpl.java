@@ -99,10 +99,6 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
             try {
                 String query = "SELECT * FROM university";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                Logging log = new Logging("getAllUniversities",
-                                            "REQUEST-SERVICE: " + getSource(),
-                                            exchange.getRemoteAddress().getAddress().getHostAddress());
-                log.insertLogging();
                 stmt.execute();
                 ArrayList<University> universities = new ArrayList<>();
                 while (stmt.getResultSet().next()) {
@@ -112,6 +108,10 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
                     uni.setName(stmt.getResultSet().getString("name"));
                     universities.add(uni);
                 }
+                Logging log = new Logging("getAllUniversities",
+                                            "REQUEST-SERVICE: " + getSource(),
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
                 return universities;
             } catch (SQLException ex) {
                 Logger.getLogger(UniversityServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
