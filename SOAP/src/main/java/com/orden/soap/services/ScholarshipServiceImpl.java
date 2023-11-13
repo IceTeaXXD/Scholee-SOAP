@@ -2,12 +2,12 @@ package com.orden.soap.services;
 
 import com.orden.soap.model.Logging;
 import com.orden.soap.model.Scholarship;
+import com.orden.soap.model.ScholarshipView;
 import com.sun.net.httpserver.HttpExchange;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.ArrayList;
 
 import javax.jws.WebMethod;
@@ -171,6 +171,44 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
             }
         }
 
+    }
+
+    @WebMethod
+    public ArrayList<ScholarshipView> getScholarshipView(int uis_rest){
+        MessageContext mc = wsContext.getMessageContext();    
+        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+
+        if(validateAPIKey()){
+            try{
+                String query = "SELECT scholarship_id_rest, view_count FROM scholarship WHERE user_id_scholarship_rest = ? AND user_id_scholarship_rest != -1 AND scholarship_id_rest != -1";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, uis_rest);
+
+                ResultSet rs = stmt.executeQuery();
+
+                ArrayList<ScholarshipView> list = new ArrayList<>();
+
+                while(rs.next()){
+                    ScholarshipView sv = new ScholarshipView();
+                    sv.setUser_id_scholarship_rest(rs.getInt("scholarship_id_rest"));
+                    sv.setView_count(rs.getInt("view_count"));
+
+                    list.add(sv);
+                }
+
+                Logging log = new Logging("getScholarshipView",
+                                        "REQUEST-SERVICE: " + getSource() + "; uis_rest: " + uis_rest,
+                                        exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+                
+                return list;
+            }catch (Exception e){
+                System.out.println(e.getMessage());
+                return null;
+            }
+        }else{
+            return null;
+        }
     }
     
 }

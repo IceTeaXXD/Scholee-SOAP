@@ -7,6 +7,7 @@ import javax.jws.WebParam;
 import javax.jws.WebService;
 
 import com.orden.soap.model.Scholarship;
+import com.orden.soap.model.ScholarshipView;
 
 @WebService
 public interface ScholarshipService {
@@ -31,5 +32,10 @@ public interface ScholarshipService {
     public void addScholarshipView(
         @WebParam(name = "user_id_scholarship_php") int uis_php,
         @WebParam(name = "scholarship_id_php") int sid_php
+    );
+
+    @WebMethod
+    public ArrayList<ScholarshipView> getScholarshipView(
+        @WebParam(name = "user_id_scholarship_rest") int uis_rest
     );
 }
