@@ -1,6 +1,5 @@
 package com.orden.soap.services;
 
-import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.orden.soap.model.Scholarship;
 import com.sun.net.httpserver.HttpExchange;
@@ -10,19 +9,13 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
-import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import com.orden.soap.model.BaseService;
 
 @WebService(endpointInterface = "com.orden.soap.services.ScholarshipService")
 public class ScholarshipServiceImpl extends BaseService implements ScholarshipService{
-    private static final Database db = new Database();
-    @Resource
-    WebServiceContext wsContext;
-    
     @Override
     @WebMethod
     public String registerScholarship(int uis_php, int sid_php) {
@@ -48,7 +41,9 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
 
                     /* Check if the execution is successful or not */
                     if(stmt.getUpdateCount() > 0){
-                        Logging log = new Logging(getSource() + " : SCHOLARSHIP ADDED", exchange.getRemoteAddress().getAddress().getHostAddress());
+                        Logging log = new Logging("registerScholarship",
+                                                "REQUEST-SERVICE: " + getSource() + "; uis_php: " + uis_php + "; sid_php: " + sid_php,
+                                                exchange.getRemoteAddress().getAddress().getHostAddress());
                         log.insertLogging();
                         return "Scholarship Added";
                     }else{
@@ -92,7 +87,9 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
                     stmt.execute();
 
                     if(stmt.getUpdateCount() > 0){
-                        Logging log = new Logging(getSource() + " : REST Scholarship SET", exchange.getRemoteAddress().getAddress().getHostAddress());
+                        Logging log = new Logging("setRESTScholarshipID",
+                                    "REQUEST-SERVICE: " + getSource() + "; uis_php: " + uis_php + "; sid_php: " + sid_php + "; uis_rest: " + uis_rest + "; sid_rest: " + sid_rest, 
+                                    exchange.getRemoteAddress().getAddress().getHostAddress());
                         log.insertLogging();
                         return "REST Scholarship SET";
                     }else{
@@ -117,8 +114,9 @@ public class ScholarshipServiceImpl extends BaseService implements ScholarshipSe
         HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
         if(validateAPIKey()){
             try{
-                Logging log = new Logging(getSource() +  " : SCHOLARSHIP GET ALL",
-                        exchange.getRemoteAddress().getAddress().getHostAddress());
+                Logging log = new Logging("getAllScholarship",
+                                    "REQUEST-SERVICE: " + getSource(),
+                                    exchange.getRemoteAddress().getAddress().getHostAddress());
                 log.insertLogging();
 
                 String query = "SELECT * FROM scholarship";

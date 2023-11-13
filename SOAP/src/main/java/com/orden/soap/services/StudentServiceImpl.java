@@ -4,17 +4,14 @@
  */
 package com.orden.soap.services;
 
-import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import com.orden.soap.model.BaseService;
 
@@ -23,12 +20,7 @@ import com.orden.soap.model.BaseService;
  * @author henryanand
  */
 @WebService(endpointInterface="com.orden.soap.services.StudentService")
-public class StudentServiceImpl extends BaseService implements StudentService{
-    private static final Database db = new Database();
-    
-    @Resource
-    WebServiceContext wsContext;
-    
+public class StudentServiceImpl extends BaseService implements StudentService{    
     @Override
     @WebMethod
     public String registerStudent(int user_id, int rest_uni_id, int php_uni_id) {
@@ -46,10 +38,11 @@ public class StudentServiceImpl extends BaseService implements StudentService{
 
                 String returnVal;
                 if (stmt.getUpdateCount() > 0) {
-                    /* TODO: Add SOAP or REST Information on Description */
                     String clientAddr = exchange.getRemoteAddress().getAddress().getHostAddress();
                     System.out.println(clientAddr);
-                    Logging log = new Logging(getSource() +  " : REGISTRATION ADD", exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("registerStudent",
+                                        "REQUEST-SERVICE: " + getSource() + "; user_id: " + user_id + "; rest_uni_id: " + rest_uni_id + "; php_uni_id: " + php_uni_id,
+                                        exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     returnVal = "Register Success";
                 } else {

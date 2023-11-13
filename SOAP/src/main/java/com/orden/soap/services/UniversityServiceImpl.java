@@ -4,17 +4,14 @@
  */
 package com.orden.soap.services;
 
-import com.orden.soap.database.Database;
 import com.orden.soap.model.Logging;
 import com.sun.net.httpserver.HttpExchange;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.annotation.Resource;
 import javax.jws.WebMethod;
 import javax.jws.WebService;
-import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import java.util.ArrayList;
 import com.orden.soap.model.University;
@@ -25,12 +22,6 @@ import com.orden.soap.model.BaseService;
  */
 @WebService(endpointInterface = "com.orden.soap.services.UniversityService")
 public class UniversityServiceImpl extends BaseService implements UniversityService {
-
-    private static final Database db = new Database();
-
-    @Resource
-    WebServiceContext wsContext;
-
     @Override
     @WebMethod
     public String createUniversity(int rest_uni_id, String university_name) {
@@ -47,8 +38,9 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
                 stmt.execute();
                 if (stmt.getUpdateCount() > 0) {
                     /* Log it and Return Success */
-                    Logging log = new Logging(getSource() + " : REST UNIVERSITY ADD",
-                            exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("createUniversity", 
+                                                "REQUEST-SERVICE: " + getSource() + "; rest_uni_id: " + rest_uni_id + "; university_name: " + university_name,
+                                                exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
                 } else {
@@ -79,8 +71,9 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
 
                 stmt.execute();
                 if (stmt.getUpdateCount() > 0) {
-                    Logging log = new Logging(getSource() + " : PHP UNIVERSITY ADD",
-                            exchange.getRemoteAddress().getAddress().getHostAddress());
+                    Logging log = new Logging("setPHPId",
+                                                "REQUEST-SERVICE: " + getSource() + "; rest_uni_id: " + rest_uni_id + "; php_uni_id: " + php_uni_id,
+                                                exchange.getRemoteAddress().getAddress().getHostAddress());
                     log.insertLogging();
                     return "Success";
                 } else {
@@ -106,8 +99,9 @@ public class UniversityServiceImpl extends BaseService implements UniversityServ
             try {
                 String query = "SELECT * FROM university";
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                Logging log = new Logging(getSource() + " : UNIVERSITY GET ALL",
-                        exchange.getRemoteAddress().getAddress().getHostAddress());
+                Logging log = new Logging("getAllUniversities",
+                                            "REQUEST-SERVICE: " + getSource(),
+                                            exchange.getRemoteAddress().getAddress().getHostAddress());
                 log.insertLogging();
                 stmt.execute();
                 ArrayList<University> universities = new ArrayList<>();

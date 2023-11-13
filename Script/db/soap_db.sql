@@ -39,6 +39,7 @@ create table students(
 
 create table logging(
     logging_id int not null auto_increment,
+    endpoint varchar(255) not null,
     description varchar(255) not null,
     ip_address varchar(16) not null,
     timestamp TIMESTAMP not null default CURRENT_TIMESTAMP,
