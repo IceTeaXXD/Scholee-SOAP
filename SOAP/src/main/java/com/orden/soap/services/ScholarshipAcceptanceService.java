@@ -39,5 +39,8 @@ public interface ScholarshipAcceptanceService {
             @WebParam(name="user_id_scholarship_php") int uid_php,
             @WebParam(name="scholarship_id_php") int sid_php,
             @WebParam(name="scholarship_id_rest") int sid_rest
-    );    
+    );
+
+    @WebMethod
+    public ArrayList<Acceptance> getAllScholarshipAcceptance();
 }
