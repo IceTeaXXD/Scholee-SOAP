@@ -26,7 +26,7 @@ import com.orden.soap.model.BaseService;
 public class OrganizationRegistrationServiceImpl extends BaseService implements OrganizationRegistrationService {    
     @Override
     @WebMethod
-    public String registerOrganization(int org_id_php) {
+    public String registerOrganization(int org_id_php, String referral) {
         if(validateAPIKey()){
             String query = "INSERT INTO organization_registration (org_id_php, referral_code) VALUES (?,?)";
             String returnVal;
@@ -34,16 +34,9 @@ public class OrganizationRegistrationServiceImpl extends BaseService implements 
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             try {
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
-                int tokenLength = 16;
-
-                SecureRandom secureRandom = new SecureRandom();
-                byte[] randomBytes = new byte[tokenLength];
-                secureRandom.nextBytes(randomBytes);
-
-                String token = Base64.getEncoder().encodeToString(randomBytes);
                 
                 stmt.setInt(1, org_id_php);
-                stmt.setString(2, token);
+                stmt.setString(2, referral);
                 stmt.execute();
 
                 if(stmt.getUpdateCount() > 0){

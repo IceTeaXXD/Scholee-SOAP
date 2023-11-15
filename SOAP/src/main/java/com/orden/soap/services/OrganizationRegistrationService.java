@@ -16,7 +16,8 @@ import javax.jws.WebService;
 public interface OrganizationRegistrationService {
     @WebMethod
     public String registerOrganization(
-            @WebParam(name="org_id_php")int org_id_php
+            @WebParam(name="org_id_php")int org_id_php,
+            @WebParam(name="referral")String referral
     );
     
     @WebMethod
