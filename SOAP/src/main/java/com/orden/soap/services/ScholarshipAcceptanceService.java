@@ -53,4 +53,8 @@ public interface ScholarshipAcceptanceService {
     @WebMethod
     public ArrayList<String> getUserInfo(int uid);
     
+    @WebMethod
+    public ArrayList<Acceptance> getStudentOfScholarship(
+            @WebParam(name="scholarship_id_rest") int sid_rest
+    );
 }

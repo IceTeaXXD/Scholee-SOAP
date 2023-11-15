@@ -379,4 +379,43 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
             return new ArrayList<>();
         }
     }
+    @Override
+    @WebMethod
+    public ArrayList<Acceptance> getStudentOfScholarship(int sid_rest) {
+        if (validateAPIKey()) {
+            MessageContext mc = wsContext.getMessageContext();
+            HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
+            try {
+                String query = "SELECT user_id_student, user_id_scholarship_php, scholarship_id_rest, scholarship_id_php, status FROM scholarship_acceptance WHERE scholarship_id_rest = ?";
+                PreparedStatement stmt = db.getConnection().prepareStatement(query);
+                stmt.setInt(1, sid_rest);
+                ResultSet rs = stmt.executeQuery();
+            
+            ArrayList<Acceptance> acceptances = new ArrayList<>();
+
+            while (rs.next()) {
+                Acceptance acceptance = new Acceptance();
+                acceptance.setUser_id_student(rs.getInt("user_id_student"));
+                acceptance.setUser_id_scholarship(rs.getInt("user_id_scholarship_php"));
+                acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
+                acceptance.setStatus(rs.getString("status"));
+                acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
+
+                acceptances.add(acceptance);
+            }
+
+            Logging log = new Logging("getStudentOfScholarship",
+                "REQUEST-SERVICE: " + getSource() + "; sid_rest: " + sid_rest,
+                exchange.getRemoteAddress().getAddress().getHostAddress());
+            log.insertLogging();
+
+            return acceptances;
+        } catch (SQLException ex) {
+            Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+            return new ArrayList<>();
+        }
+        } else {
+            return new ArrayList<>();
+        }
+    }
 }
