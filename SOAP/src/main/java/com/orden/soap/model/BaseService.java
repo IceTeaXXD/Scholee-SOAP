@@ -17,7 +17,7 @@ import javax.annotation.Resource;
 public abstract class BaseService {
     protected static final Database db = new Database();
 
-    Dotenv dotenv = Dotenv.load();
+    protected Dotenv dotenv = Dotenv.load();
 
     @Resource
     protected WebServiceContext wsContext;

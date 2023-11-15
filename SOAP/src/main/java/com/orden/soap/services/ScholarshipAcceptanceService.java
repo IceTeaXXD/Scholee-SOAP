@@ -28,6 +28,7 @@ public interface ScholarshipAcceptanceService {
     public String setAcceptance(
             @WebParam(name="user_id_student")int uid, 
             @WebParam(name="scholarship_id_rest")int sid_rest,
+            @WebParam(name="scholarship_name")String sname,
             @WebParam(name="status") String status);
 
     @WebMethod
@@ -43,4 +44,13 @@ public interface ScholarshipAcceptanceService {
 
     @WebMethod
     public ArrayList<Acceptance> getAllScholarshipAcceptance();
+
+    @WebMethod
+    public String test();
+
+    public void sendEmail(String to, String name, String status, String scholarshipname);
+
+    @WebMethod
+    public ArrayList<String> getUserInfo(int uid);
+    
 }
