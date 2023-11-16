@@ -45,10 +45,10 @@ public interface ScholarshipAcceptanceService {
     @WebMethod
     public ArrayList<Acceptance> getAllScholarshipAcceptance();
 
-    public void sendEmail(String to, String name, String status, String scholarshipname);
-
     @WebMethod
-    public ArrayList<String> getUserInfo(int uid);
+    public ArrayList<String> getUserInfo(
+        @WebParam(name="user_id_student")int uid
+    );
     
     @WebMethod
     public ArrayList<Acceptance> getStudentOfScholarship(

@@ -232,7 +232,7 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
         }
     }
 
-    public void sendEmail(String to, String name, String status, String scholarshipname) {
+    private void sendEmail(String to, String name, String status, String scholarshipname) {
         String from = "scholeeedu@gmail.com";
         String host = "smtp.gmail.com";
         Properties properties = System.getProperties();
