@@ -18,91 +18,308 @@ mvn clean install
 java --add-opens java.base/java.lang=ALL-UNNAMED -jar ./target/SOAP-1.0-SNAPSHOT.jar
 ```
 
-## Getting started
-
-To make it easy for you to get started with GitLab, here's a list of recommended next steps.
-
-Already a pro? Just edit this README.md and make it your own. Want to make it easy? [Use the template at the bottom](#editing-this-readme)!
-
-## Add your files
-
-- [ ] [Create](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#create-a-file) or [upload](https://docs.gitlab.com/ee/user/project/repository/web_editor.html#upload-a-file) files
-- [ ] [Add files using the command line](https://docs.gitlab.com/ee/gitlab-basics/add-file.html#add-a-file-using-the-command-line) or push an existing Git repository with the following command:
+## Database
+The scheme for the SOAP Service is as follows in SQL
 
 ```
-cd existing_repo
-git remote add origin https://gitlab.informatika.org/if3110-2023-02-a/soap-service.git
-git branch -M main
-git push -uf origin main
+create table organization_registration(
+    org_id_php int not null,
+    org_id_rest int default -1,
+    referral_code varchar(64) not null,
+    primary key (org_id_php, org_id_rest, referral_code)
+);
+
+create table scholarship_acceptance(
+    user_id_student int not null,
+    user_id_scholarship_php int not null,
+    scholarship_id_php int not null,
+    scholarship_id_rest int not null,
+    status enum('accepted', 'rejected', 'waiting'),
+    primary key (user_id_student, user_id_scholarship_php, scholarship_id_php, scholarship_id_rest)
+);
+
+create table scholarship(
+    user_id_scholarship_php int not null,
+    scholarship_id_php int not null,
+    user_id_scholarship_rest int not null,
+    scholarship_id_rest int default -1,
+    view_count int default 0,
+    primary key(user_id_scholarship_php, scholarship_id_php, user_id_scholarship_rest, scholarship_id_rest)
+);
+
+create table university(
+    rest_uni_id int not null,
+    php_uni_id int default -1,
+    name varchar(255),
+    primary key (rest_uni_id, php_uni_id)
+);
+
+create table students(
+    user_id int not null,
+    rest_uni_id int not null,
+    php_uni_id int not null,
+    primary key (user_id, rest_uni_id, php_uni_id),
+    foreign key (rest_uni_id) references university(rest_uni_id)
+);
+
+create table logging(
+    logging_id int not null auto_increment,
+    endpoint varchar(255) not null,
+    description varchar(255) not null,
+    ip_address varchar(16) not null,
+    timestamp TIMESTAMP not null default CURRENT_TIMESTAMP,
+    primary key (logging_id)
+);
+
+create table apikeys(
+    id_key int not null auto_increment,
+    service_name varchar(255) not null,
+    key_value varchar(255) not null,
+    primary key (id_key, key_value)
+);
 ```
 
-## Integrate with your tools
+## API Endpoints
+Endpoints are published at localhost:8080/ws/[service name]. API uses POST method using XML Envelopes that will be given below for each services.
 
-- [ ] [Set up project integrations](https://gitlab.informatika.org/if3110-2023-02-a/soap-service/-/settings/integrations)
+### Student Service
+#### registerStudent
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <registerStudent xmlns="http://services.soap.orden.com/">
+            <user_id xmlns="">1</user_id>
+            <rest_uni_id xmlns="">1</rest_uni_id>
+            <php_uni_id xmlns="">-1</php_uni_id>
+        </registerStudent>
+    </Body>
+</Envelope>
+```
 
-## Collaborate with your team
+### University Service
+#### createUniversity
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <createUniversity xmlns="http://services.soap.orden.com/">
+            <rest_uni_id xmlns="">1</rest_uni_id>
+            <university_name xmlns="">ITB</university_name>
+        </createUniversity>
+    </Body>
+</Envelope>
+```
 
-- [ ] [Invite team members and collaborators](https://docs.gitlab.com/ee/user/project/members/)
-- [ ] [Create a new merge request](https://docs.gitlab.com/ee/user/project/merge_requests/creating_merge_requests.html)
-- [ ] [Automatically close issues from merge requests](https://docs.gitlab.com/ee/user/project/issues/managing_issues.html#closing-issues-automatically)
-- [ ] [Enable merge request approvals](https://docs.gitlab.com/ee/user/project/merge_requests/approvals/)
-- [ ] [Set auto-merge](https://docs.gitlab.com/ee/user/project/merge_requests/merge_when_pipeline_succeeds.html)
+#### setPHPId
+Set the University ID on Monolith App
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <setPHPId xmlns="http://services.soap.orden.com/">
+            <php_uni_id xmlns="">1</php_uni_id>
+            <rest_uni_id xmlns="">2</rest_uni_id>
+        </setPHPId>
+    </Body>
+</Envelope>
+```
 
-## Test and Deploy
+#### getAllUniversities
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getAllUniversities xmlns="http://services.soap.orden.com/"/>
+    </Body>
+</Envelope>
+```
 
-Use the built-in continuous integration in GitLab.
+### Organization Registration
+#### registerOrganization
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <registerOrganization xmlns="http://services.soap.orden.com/">
+            <org_id_php xmlns="">1</org_id_php>
+        </registerOrganization>
+    </Body>
+</Envelope>
+```
 
-- [ ] [Get started with GitLab CI/CD](https://docs.gitlab.com/ee/ci/quick_start/index.html)
-- [ ] [Analyze your code for known vulnerabilities with Static Application Security Testing(SAST)](https://docs.gitlab.com/ee/user/application_security/sast/)
-- [ ] [Deploy to Kubernetes, Amazon EC2, or Amazon ECS using Auto Deploy](https://docs.gitlab.com/ee/topics/autodevops/requirements.html)
-- [ ] [Use pull-based deployments for improved Kubernetes management](https://docs.gitlab.com/ee/user/clusters/agent/)
-- [ ] [Set up protected environments](https://docs.gitlab.com/ee/ci/environments/protected_environments.html)
+#### createRESTId
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <registerOrganization xmlns="http://services.soap.orden.com/">
+            <org_id_php xmlns="">1</org_id_php>
+        </registerOrganization>
+    </Body>
+</Envelope>
+```
 
-***
+#### validateReferralCode
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <validateReferralCode xmlns="http://services.soap.orden.com/">
+            <referral_code xmlns="">abcdefgh</referral_code>
+        </validateReferralCode>
+    </Body>
+</Envelope>
+```
 
-# Editing this README
+### Scholarship Service
+#### registerScholarship
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <registerScholarship xmlns="http://services.soap.orden.com/">
+            <user_id_scholarship_php xmlns="">[int]</user_id_scholarship_php>
+            <scholarship_id_php xmlns="">[int]</scholarship_id_php>
+        </registerScholarship>
+    </Body>
+</Envelope>
+```
 
-When you're ready to make this README your own, just edit this file and use the handy template below (or feel free to structure it however you want - this is just a starting point!). Thank you to [makeareadme.com](https://www.makeareadme.com/) for this template.
+#### getAllScholarship
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getAllScholarship xmlns="http://services.soap.orden.com/"/>
+    </Body>
+</Envelope>
+```
 
-## Suggestions for a good README
-Every project is different, so consider which of these sections apply to yours. The sections used in the template are suggestions for most open source projects. Also keep in mind that while a README can be too long and detailed, too long is better than too short. If you think your README is too long, consider utilizing another form of documentation rather than cutting out information.
+#### addScholarshipView
+Add scholarship view count
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <addScholarshipView xmlns="http://services.soap.orden.com/">
+            <user_id_scholarship_php xmlns="">[int]</user_id_scholarship_php>
+            <scholarship_id_php xmlns="">[int]</scholarship_id_php>
+        </addScholarshipView>
+    </Body>
+</Envelope>
+```
 
-## Name
-Choose a self-explaining name for your project.
+#### getScholarshipView
+Get scholarship view count
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getScholarshipView xmlns="http://services.soap.orden.com/">
+            <user_id_scholarship_rest xmlns="">[int]</user_id_scholarship_rest>
+        </getScholarshipView>
+    </Body>
+</Envelope>
+```
 
-## Description
-Let people know what your project can do specifically. Provide context and add a link to any reference visitors might be unfamiliar with. A list of Features or a Background subsection can also be added here. If there are alternatives to your project, this is a good place to list differentiating factors.
+#### setRESTScholarshipID
+Set the rest scholarship id
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <setRESTscholarshipID xmlns="http://services.soap.orden.com/">
+            <user_id_scholarship_php xmlns="">[int]</user_id_scholarship_php>
+            <scholarship_id_php xmlns="">[int]</scholarship_id_php>
+            <user_id_scholarship_rest xmlns="">[int]</user_id_scholarship_rest>
+            <scholarship_id_rest xmlns="">[int]</scholarship_id_rest>
+        </setRESTscholarshipID>
+    </Body>
+</Envelope>
+```
 
-## Badges
-On some READMEs, you may see small images that convey metadata, such as whether or not all the tests are passing for the project. You can use Shields to add some to your README. Many services also have instructions for adding a badge.
+### Scholarship Acceptance Service
+#### getAcceptanceStatus
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getAcceptanceStatus xmlns="http://services.soap.orden.com/">
+            <user_id_student xmlns="">[int]</user_id_student>
+        </getAcceptanceStatus>
+    </Body>
+</Envelope>
+```
 
-## Visuals
-Depending on what you are making, it can be a good idea to include screenshots or even a video (you'll frequently see GIFs rather than actual videos). Tools like ttygif can help, but check out Asciinema for a more sophisticated method.
+#### getAllScholarshipAcceptance
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getAllScholarshipAcceptance xmlns="http://services.soap.orden.com/"/>
+    </Body>
+</Envelope>
+```
 
-## Installation
-Within a particular ecosystem, there may be a common way of installing things, such as using Yarn, NuGet, or Homebrew. However, consider the possibility that whoever is reading your README is a novice and would like more guidance. Listing specific steps helps remove ambiguity and gets people to using your project as quickly as possible. If it only runs in a specific context like a particular programming language version or operating system or has dependencies that have to be installed manually, also add a Requirements subsection.
+#### getStudentOfScholarship
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getStudentOfScholarship xmlns="http://services.soap.orden.com/">
+            <scholarship_id_rest xmlns="">[int]</scholarship_id_rest>
+        </getStudentOfScholarship>
+    </Body>
+</Envelope>
+```
 
-## Usage
-Use examples liberally, and show the expected output if you can. It's helpful to have inline the smallest example of usage that you can demonstrate, while providing links to more sophisticated examples if they are too long to reasonably include in the README.
+#### getUserInfo
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <getUserInfo xmlns="http://services.soap.orden.com/">
+            <user_id_student xmlns="">[int]</user_id_student>
+        </getUserInfo>
+    </Body>
+</Envelope>
+```
 
-## Support
-Tell people where they can go to for help. It can be any combination of an issue tracker, a chat room, an email address, etc.
+#### registerScholarshipApplication
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <registerScholarshipApplication xmlns="http://services.soap.orden.com/">
+            <user_id_student xmlns="">[int]</user_id_student>
+            <user_id_scholarship xmlns="">[int]</user_id_scholarship>
+            <scholarship_id xmlns="">[int]</scholarship_id>
+        </registerScholarshipApplication>
+    </Body>
+</Envelope>
+```
 
-## Roadmap
-If you have ideas for releases in the future, it is a good idea to list them in the README.
+#### setAcceptance
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <setAcceptance xmlns="http://services.soap.orden.com/">
+            <user_id_student xmlns="">[int]</user_id_student>
+            <scholarship_id_rest xmlns="">[int]</scholarship_id_rest>
+            <scholarship_name xmlns="">[string?]</scholarship_name>
+            <status xmlns="">[string?]</status>
+        </setAcceptance>
+    </Body>
+</Envelope>
+```
 
-## Contributing
-State if you are open to contributions and what your requirements are for accepting them.
+#### setScholarshipIDREST
+Set the scholarship ID in the REST
+```
+<Envelope xmlns="http://schemas.xmlsoap.org/soap/envelope/">
+    <Body>
+        <setScholarshipIDREST xmlns="http://services.soap.orden.com/">
+            <user_id_scholarship_php xmlns="">[int]</user_id_scholarship_php>
+            <scholarship_id_php xmlns="">[int]</scholarship_id_php>
+            <scholarship_id_rest xmlns="">[int]</scholarship_id_rest>
+        </setScholarshipIDREST>
+    </Body>
+</Envelope>
+```
 
-For people who want to make changes to your project, it's helpful to have some documentation on how to get started. Perhaps there is a script that they should run or some environment variables that they need to set. Make these steps explicit. These instructions could also be useful to your future self.
-
-You can also document commands to lint the code or run tests. These steps help to ensure high code quality and reduce the likelihood that the changes inadvertently break something. Having instructions for running tests is especially helpful if it requires external setup, such as starting a Selenium server for testing in a browser.
-
-## Authors and acknowledgment
-Show your appreciation to those who have contributed to the project.
-
-## License
-For open source projects, say how it is licensed.
-
-## Project status
-If you have run out of energy or time for your project, put a note at the top of the README saying that development has slowed down or stopped completely. Someone may choose to fork your project or volunteer to step in as a maintainer or owner, allowing your project to keep going. You can also make an explicit request for maintainers.
+## Contributors
+| Services/Functionality | 13521004 | 13521007 | 13521024 |
+| ------------- | -------- | -------- | -------- |
+| SOAP Setup    |          | &check;  |          |
+| Models        | &check;  | &check;  |   &check;       |
+| Logging       |          | &check;  |          |
+| Scholarship Acceptance Service | &check;| &check; | &check; |
+| Univeristy Service |     |   &check;| &check; |
+| Scholarship Service |    | &check; |           |
+| Organization Registration Service |  | &check; | |
+| Student Service | &check; | | |
+| Java Mail     |          |          |&check;   |
