@@ -1,7 +1,10 @@
 # SOAP Service
+SOAP Service for the Scholee Web
+
+Made using Java and Maven
 
 ## Prerequisite
-Install Maven and a Java SDK
+Install Maven and a Java SDK, preferably version 8 and above.
 
 ## To Run
 ### Using Maven
@@ -313,7 +316,7 @@ Set the scholarship ID in the REST
 
 ## Contributors
 | Services/Functionality | 13521004 | 13521007 | 13521024 |
-| ------------- | -------- | -------- | -------- |
+| ------------- | :--------: | :--------: | :--------: |
 | SOAP Setup    |          | &check;  |          |
 | Models        | &check;  | &check;  |   &check;       |
 | Logging       |          | &check;  |          |
