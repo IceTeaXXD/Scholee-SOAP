@@ -54,4 +54,4 @@ create table apikeys(
     primary key (id_key, key_value)
 );
 
-insert into apikeys(service_name, key_value) values ("SOAP", "kunciT"), ("REST", "shortT_Key");
+insert into apikeys(service_name, key_value) values ("PHP", "kunciT"), ("REST", "shortT_Key");
