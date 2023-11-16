@@ -45,9 +45,6 @@ public interface ScholarshipAcceptanceService {
     @WebMethod
     public ArrayList<Acceptance> getAllScholarshipAcceptance();
 
-    @WebMethod
-    public String test();
-
     public void sendEmail(String to, String name, String status, String scholarshipname);
 
     @WebMethod

@@ -286,56 +286,6 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
 
     @Override
     @WebMethod
-    public String test() {
-        String to = "nadilahmad13@gmail.com";
-        String from = "scholeeedu@gmail.com";
-        String host = "smtp.gmail.com";
-        Properties properties = System.getProperties();
-        properties.put("mail.smtp.host", host);
-        properties.put("mail.smtp.port", "465");
-        properties.put("mail.smtp.ssl.enable", "true");
-        properties.put("mail.smtp.auth", "true");
-
-        Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication("scholeeedu@gmail.com", "pnpaxnrwarupnojb");
-            }
-        });
-
-        session.setDebug(true);
-
-        try {
-            MimeMessage message = new MimeMessage(session);
-            message.setFrom(new InternetAddress(from));
-            message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
-            message.setSubject("Dasar Lab Admin!");
-
-            // Add header to email content
-            String content = """
-                        <html>
-                            <body>
-                                <h1>Hello Jason!</h1>
-                                <h2>Congratulations!</h2>
-                                <p>You have been accepted to Nadil's Scholarship.</p>
-                                <p>Thank you for your support!</p>
-                            </body>
-                            <footer>
-                                <p>© 2019 Nadil's Scholarship</p>
-                            </footer>
-                        </html>
-                    """;
-            message.setContent(content, "text/html");
-            System.out.println("Sending email...");
-            Transport.send(message);
-            System.out.println("Email sent!");
-        } catch (MessagingException mex) {
-            mex.printStackTrace();
-        }
-        return "Success";
-    }
-
-    @Override
-    @WebMethod
     public ArrayList<String> getUserInfo(int userid) {
         String url = dotenv.get("PHP_URL");
         String endpoint = url + "/api/profile/info.php?userid=" + String.valueOf(1);
