@@ -39,17 +39,6 @@ import javax.mail.internet.MimeMessage;
  */
 @WebService(endpointInterface = "com.orden.soap.services.ScholarshipAcceptanceService")
 public class ScholarshipAcceptanceServiceImpl extends BaseService implements ScholarshipAcceptanceService {
-    public String acceptedMessage = "<html><body>" +
-            "<h1>Hello there!</h1>" +
-            "<p>Congratulations! You have been accepted to the scholarship.</p>" +
-            "<p>Thank you for your support!</p>" +
-            "</body></html>";
-    public String rejectedMessage = "<html><body>" +
-            "<h1>Hello there!</h1>" +
-            "<p>We are sorry to inform you that you have been rejected from the scholarship.</p>" +
-            "<p>Thank you for your support!</p>" +
-            "</body></html>";
-
     @Override
     @WebMethod
     public String registerScholarshipApplication(int uid, int uis, int sid) {
@@ -258,22 +247,20 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
             }
         });
 
-        session.setDebug(true);
-
         try {
             MimeMessage message = new MimeMessage(session);
             message.setFrom(new InternetAddress(from));
             message.addRecipient(Message.RecipientType.TO, new InternetAddress(to));
             message.setSubject("Scholarship Application Announcement");
-            if (status == "accepted") {
+            if (status.equals("accepted")) {
                 message.setContent(
-                        "<html><body><h1>Dear" + name + "</h1><p>Congratulations! You have been accepted on the "
-                                + scholarshipname + "</p><p>Thank you for your application!</p></body></html>",
+                        "<html><body><h1>Congratulations!</h1><h2>Dear, " + name + "</h2><p> You have been accepted on the "
+                                + scholarshipname + " scholarship</p><p>Thank you for your application!</p></body></html>",
                         "text/html");
             } else {
                 message.setContent(
-                        "<html><body><h1>Dear" + name + "</h1><p>We are sorry to inform you that you have been rejected on the "
-                                + scholarshipname + "</p><p>Thank you for your application!</p></body></html>",
+                        "<html><body><h1>We are sorry!</h1><h2>Dear, " + name + "</h2><p>We are sorry to inform you that you have been rejected on the "
+                                + scholarshipname + " scholarship</p><p>Thank you for your application!</p></body></html>",
                         "text/html");
             }
             System.out.println("Sending email...");
@@ -288,7 +275,7 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
     @WebMethod
     public ArrayList<String> getUserInfo(int userid) {
         String url = dotenv.get("PHP_URL");
-        String endpoint = url + "/api/profile/info.php?userid=" + String.valueOf(1);
+        String endpoint = url + "/api/profile/info.php?userid=" + String.valueOf(userid);
         try {
             URI uri;
             uri = new URI(endpoint);
