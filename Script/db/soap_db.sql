@@ -46,3 +46,12 @@ create table logging(
     timestamp TIMESTAMP not null default CURRENT_TIMESTAMP,
     primary key (logging_id)
 );
+
+create table apikeys(
+    id_key int not null auto_increment,
+    service_name varchar(255) not null,
+    key_value varchar(255) not null,
+    primary key (id_key, key_value)
+);
+
+insert into apikeys(service_name, key_value) values ("SOAP", "kunciT"), ("REST", "shortT_Key");

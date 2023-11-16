@@ -8,6 +8,10 @@ import com.sun.net.httpserver.HttpExchange;
 import javax.xml.ws.WebServiceContext;
 import javax.xml.ws.handler.MessageContext;
 import io.github.cdimascio.dotenv.Dotenv;
+
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
 import javax.annotation.Resource;
 
 /**
@@ -19,6 +23,8 @@ public abstract class BaseService {
 
     protected Dotenv dotenv = Dotenv.load();
 
+    protected String service;
+
     @Resource
     protected WebServiceContext wsContext;
 
@@ -29,10 +35,20 @@ public abstract class BaseService {
             HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
             String apiKey = exchange.getRequestHeaders().getFirst("X-API-KEY");
 
-            if (apiKey.equals(dotenv.get("REST_API_KEY")) || apiKey.equals(dotenv.get("PHP_API_KEY"))) {
+            /* Check for the API KEYS*/
+            String query = "SELECT service_name FROM apikeys WHERE key_value = ?";
+
+            PreparedStatement stmt = db.getConnection().prepareStatement(query);
+
+            stmt.setString(1, apiKey);
+
+            ResultSet rs = stmt.executeQuery();
+
+            if(rs.next()){
+                this.service = rs.getString("service_name");
                 System.out.println("X-API-KEY: " + apiKey);
                 return true;
-            } else {
+            }else{
                 System.out.println("Invalid X-API-KEY: " + apiKey);
                 return false;
             }
@@ -43,13 +59,6 @@ public abstract class BaseService {
     }
     
     protected String getSource() {
-        MessageContext mc = wsContext.getMessageContext();
-        HttpExchange exchange = (HttpExchange) mc.get("com.sun.xml.ws.http.exchange");
-        String apiKey = exchange.getRequestHeaders().getFirst("X-API-KEY");
-        if (apiKey.equals(dotenv.get("REST_API_KEY"))) {
-            return "REST";
-        } else {
-            return "PHP";
-        }
+        return this.service;
     }
 }
