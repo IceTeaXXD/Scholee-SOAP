@@ -254,13 +254,20 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
             message.setSubject("Scholarship Application Announcement");
             if (status.equals("accepted")) {
                 message.setContent(
-                        "<html><body><h1>Congratulations!</h1><h2>Dear, " + name + "</h2><p> You have been accepted on the "
-                                + scholarshipname + " scholarship</p><p>Thank you for your application!</p></body></html>",
+                        "<html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'><title>Scholarship Notification</title><style>.container{max-width:800px;margin:0 auto;background:#f3f1f1;font-family:Calibri;}.header{border-bottom:5px solid #000000;text-align:center;padding:3px;font-size:23px;}.content{padding:5px;margin:20px;}.title{text-align:center;color:#444;}.body{color:#060675;font-size:20px;}.accept-button,.reject-button{display:inline-block;padding:10px 20px;margin:10px;text-decoration:none;color:#ffffff;border-radius:5px;}.accept-button{background-color:#4caf50;}.reject-button{background-color:#f44336;}.footer{text-align:center;padding:15px;}.clear{clear:both;}</style></head><body><div class='container'><div class='header'><br><strong>Scholee</strong><br>Get matched to Scholarships that fit you<br><a href='scholeeedu@gmail.com'>scholeeedu@gmail.com</a></div><div class='content'><div class='title'><h2>Scholarship Application Announcement</h2></div><div class='body'><p>Dear, "
+                                + name
+                                + "</p><p>We are pleased to inform you about the status of your scholarship application in "
+                                + scholarshipname
+                                + ". After careful consideration, we would like to convey the following message:</p><div style='text-align:center;'><a class='reject-button'>YOU ARE REJECTED</a></div><p style='text-align:right;'>Best Regards,<br><br>Scholee Admin<br></p></div></div><div class='clear'></div><div class='footer'><p>Copyright &copy; Scholee Education</p><p>All Rights Reserved</p></div></div></body></html>",
                         "text/html");
             } else {
                 message.setContent(
-                        "<html><body><h1>We are sorry!</h1><h2>Dear, " + name + "</h2><p>We are sorry to inform you that you have been rejected on the "
-                                + scholarshipname + " scholarship</p><p>Thank you for your application!</p></body></html>",
+                        "<html><head><meta charset='UTF-8'><meta name='viewport' content='width=device-width,initial-scale=1.0'><title>Scholarship Notification</title><style>.container{max-width:800px;margin:0 auto;background:#f3f1f1;font-family:Calibri;}.header{border-bottom:5px solid #000000;text-align:center;padding:3px;font-size:23px;}.content{padding:5px;margin:20px;}.title{text-align:center;color:#444;}.body{color:#060675;font-size:20px;}.accept-button,.reject-button{display:inline-block;padding:10px 20px;margin:10px;text-decoration:none;color:#ffffff;border-radius:5px;}.accept-button{background-color:#4caf50;}.reject-button{background-color:#f44336;}.footer{text-align:center;padding:15px;}.clear{clear:both;}</style></head><body><div class='container'><div class='header'><br><strong>Scholee</strong><br>Get matched to Scholarships that fit you<br><a href='scholeeedu@gmail.com'>scholeeedu@gmail.com</a></div><div class='content'><div class='title'><h2>Scholarship Application Announcement</h2></div><div class='body'><p>Dear, "
+                                + name
+                                + "</p><p>We are sorry to inform you about the status of your scholarship application in "
+                                + scholarshipname
+                                + ". After careful consideration, we would like to convey the following message:</p><div style='text-align:center;'><a class='reject-button'>YOU ARE REJECTED</a></div><p style='text-align:right;'>Best Regards,<br><br>Scholee Admin<br></p></div></div><div class='clear'></div><div class='footer'><p>Copyright &copy; Scholee Education</p><p>All Rights Reserved</p></div></div></body></html>",
+
                         "text/html");
             }
             System.out.println("Sending email...");
@@ -316,6 +323,7 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
             return new ArrayList<>();
         }
     }
+
     @Override
     @WebMethod
     public ArrayList<Acceptance> getStudentOfScholarship(int sid_rest) {
@@ -327,30 +335,30 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                 PreparedStatement stmt = db.getConnection().prepareStatement(query);
                 stmt.setInt(1, sid_rest);
                 ResultSet rs = stmt.executeQuery();
-            
-            ArrayList<Acceptance> acceptances = new ArrayList<>();
 
-            while (rs.next()) {
-                Acceptance acceptance = new Acceptance();
-                acceptance.setUser_id_student(rs.getInt("user_id_student"));
-                acceptance.setUser_id_scholarship(rs.getInt("user_id_scholarship_php"));
-                acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
-                acceptance.setStatus(rs.getString("status"));
-                acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
+                ArrayList<Acceptance> acceptances = new ArrayList<>();
 
-                acceptances.add(acceptance);
+                while (rs.next()) {
+                    Acceptance acceptance = new Acceptance();
+                    acceptance.setUser_id_student(rs.getInt("user_id_student"));
+                    acceptance.setUser_id_scholarship(rs.getInt("user_id_scholarship_php"));
+                    acceptance.setScholarship_id_php(rs.getInt("scholarship_id_php"));
+                    acceptance.setStatus(rs.getString("status"));
+                    acceptance.setScholarship_id_rest(rs.getInt("scholarship_id_rest"));
+
+                    acceptances.add(acceptance);
+                }
+
+                Logging log = new Logging("getStudentOfScholarship",
+                        "REQUEST-SERVICE: " + getSource() + "; sid_rest: " + sid_rest,
+                        exchange.getRemoteAddress().getAddress().getHostAddress());
+                log.insertLogging();
+
+                return acceptances;
+            } catch (SQLException ex) {
+                Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
+                return new ArrayList<>();
             }
-
-            Logging log = new Logging("getStudentOfScholarship",
-                "REQUEST-SERVICE: " + getSource() + "; sid_rest: " + sid_rest,
-                exchange.getRemoteAddress().getAddress().getHostAddress());
-            log.insertLogging();
-
-            return acceptances;
-        } catch (SQLException ex) {
-            Logger.getLogger(ScholarshipAcceptanceServiceImpl.class.getName()).log(Level.SEVERE, null, ex);
-            return new ArrayList<>();
-        }
         } else {
             return new ArrayList<>();
         }
