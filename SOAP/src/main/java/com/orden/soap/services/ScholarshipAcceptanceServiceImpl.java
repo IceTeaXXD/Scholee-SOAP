@@ -258,7 +258,7 @@ public class ScholarshipAcceptanceServiceImpl extends BaseService implements Sch
                                 + name
                                 + "</p><p>We are pleased to inform you about the status of your scholarship application in "
                                 + scholarshipname
-                                + ". After careful consideration, we would like to convey the following message:</p><div style='text-align:center;'><a class='reject-button'>YOU ARE REJECTED</a></div><p style='text-align:right;'>Best Regards,<br><br>Scholee Admin<br></p></div></div><div class='clear'></div><div class='footer'><p>Copyright &copy; Scholee Education</p><p>All Rights Reserved</p></div></div></body></html>",
+                                + ". After careful consideration, we would like to convey the following message:</p><div style='text-align:center;'><a class='accept-button'>YOU ARE ACCEPTED</a></div><p style='text-align:right;'>Best Regards,<br><br>Scholee Admin<br></p></div></div><div class='clear'></div><div class='footer'><p>Copyright &copy; Scholee Education</p><p>All Rights Reserved</p></div></div></body></html>",
                         "text/html");
             } else {
                 message.setContent(
